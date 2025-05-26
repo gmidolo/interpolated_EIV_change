@@ -30,13 +30,13 @@ source('./src/0_helpfunctions.R')
 set.seed(123)
 dat_split <-
   bind_rows(
-    read_csv('./data/EVA.csv.xz', show_col_types = F),
-    # Load EVA data
-    format_ReSurveyEurope(
+    read_csv('./data/EVA.csv.xz', show_col_types = F), # Load EVA data
+    format_ReSurveyEurope( # Load ReSurveyEU (static, using one random point in the survey)
       training_strategy = 'random',
       path_resurvey_clean = './data/ReSurveyEU_clean.csv.xz'
-    )[['traintest_data']]  # Load ReSurveyEU (static, using one random point in the survey)
+    )[['traintest_data']]  
   )
+
 
 # extract ESy2 and discard unwanted plots based on EUNIS-ESy level-2 habitat classification
 dat_split$ESy2 <- # sapply extract_habitat_lev2() function to extract EUNIS-ESy level-2 habitat code
