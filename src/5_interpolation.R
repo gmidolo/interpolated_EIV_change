@@ -26,10 +26,10 @@ suppressPackageStartupMessages({
   library(matrixStats) # used for weighted-median plot size calculation
 })
 
-# source functions to format Resurvey data
+# source help functions 
 source('./src/0_helpfunctions.R')
 
-# prepare data for modeling and split train and test dataset
+# get initial data set
 set.seed(123)
 dat.initial <-
   bind_rows(

@@ -36,6 +36,7 @@ suppressPackageStartupMessages({
   library(vip)
   library(sf)
   library(terra)
+  library(rnaturalearth)
 })
 
 # source functions to format Resurvey data
@@ -150,7 +151,7 @@ cv_res_tidy %>%
   autofit() %>%
   save_as_docx(path = paste0(pth2fig, 'RF.cv_res.docx'))
 
-#### 4. Last fit evaluation metrics ####\
+#### 4. Last fit evaluation metrics ####
 # eval each model over testing data
 m %>% 
   map(collect_metrics) 
@@ -301,8 +302,7 @@ ggsave(
 
 
 #### 7. Geographic patterns in model residuals #### 
-# get EU sf data
-library(rnaturalearth)
+# get EU-countires sf shapes
 regions_name <- c('Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria',
                   'Corsica', 'Crete', 'Croatia', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany',
                   'Greece', 'Hungary', 'Ireland', 'Italy', 'Kosovo', 'Latvia', 'Liechtenstein',
@@ -311,7 +311,7 @@ regions_name <- c('Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzeg
                   'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Ukraine', 'United Kingdom')
 bbox_coords <- c(xmin = -1123055, ymin = 3923814, xmax = 2796649, ymax = 8007282)
 EU <- ne_countries(scale = 'large', returnclass = 'sf') %>%
-  filter(name %in% regions.name) %>%
+  filter(name %in% regions_name) %>%
   st_transform(crs = 25832) %>%
   st_crop(bbox_coords) %>% 
   select(geometry)
