@@ -139,8 +139,8 @@ res.dat <-
   bind_rows(.id = 'ind.name') %>%
   left_join(data.frame(
     ind.name = c('EIV_M', 'EIV_N', 'EIV_T', 'EIV_L', 'EIV_R'),
-    eiv_name = c('Moisture','Nutrients','Temperature','Light','Soil reaction'), 
-    by = 'ind.name'))
+    eiv_name = c('Moisture','Nutrients','Temperature','Light','Soil reaction')), 
+    by = 'ind.name')
 
 # transform EIV variables to factor
 res.dat$eiv_name <-
