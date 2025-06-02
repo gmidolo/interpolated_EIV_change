@@ -23,6 +23,17 @@ suppressPackageStartupMessages({
 d.initial <- './data/ReSurveyEU_clean.csv.xz' %>%
   read_csv(show_col_types = F)
 
+# undesired plots (observations outside the year scope)
+outside.period <- d.initial %>% 
+  filter(year < 1960 | year > 2020) 
+
+# apply filters and retain plots that have still more than one survey observation
+d.initial <- d.initial %>%
+  anti_join(outside.period, by='plot_id') %>%
+  group_by(resurv_id) %>%
+  filter(n() > 1) %>%
+  ungroup()
+
 # set ind names to analyze
 ind.names <- c('EIV_M', 'EIV_N', 'EIV_T', 'EIV_L', 'EIV_R')
 
