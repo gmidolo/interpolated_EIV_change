@@ -94,8 +94,7 @@ for(ind.name in ind.names$eiv_name_raw) {
   dat = dat.initial
   
   # assign names to focal EIV variables
-  names(dat)[which(names(dat) == paste0('n.', ind.name))] <-
-    'treshold'
+  names(dat)[which(names(dat) == paste0('n.', ind.name))] <- 'treshold'
   names(dat)[which(names(dat) == paste0('cm.', ind.name))] <- 'eiv'
   
   # apply filters accordingly to the raw data
@@ -133,8 +132,7 @@ for(ind.name in ind.names$eiv_name_raw) {
       pattern = paste0('RF.last_fit_', ind.name),
       full.names = T
     )
-  m <-  pth_model %>%
-    read_rds()
+  m <- pth_model %>% read_rds()
   
   # extract workflow for predictions
   m_wf <- extract_workflow(m)
@@ -142,7 +140,7 @@ for(ind.name in ind.names$eiv_name_raw) {
   # predict EIVs
   pred_dat <- dat
   for (i in c('min_yr', 'max_yr')) {
-    cat(i, ' - ')
+    cat('predicting over ', i, ' - ')
     pdi <- pred_dat
     pdi <- pdi %>%
       select(-year) %>%
@@ -156,8 +154,7 @@ for(ind.name in ind.names$eiv_name_raw) {
         left_join(hab_plot.size, 'ESy2') %>%
         rename(plot_size = plot_size_median)
     }
-    pred_dat[paste0('eiv_pred_', i)] <- predict(object = m_wf,
-                                                new_data = pdi) %>%  pull(.pred)
+    pred_dat[paste0('eiv_pred_', i)] <- predict(object = m_wf, new_data = pdi) %>% pull(.pred)
   }
   
   # predict changes
