@@ -14,19 +14,21 @@
 suppressPackageStartupMessages({
   library(tidyverse)
   library(tidymodels)
-  library(matrixStats) # used for weighted-median plot size calculation
+  library(flextable)
+  library(scales)
+  library(matrixStats)
 })
+
+# standardize plot size to median by habitat?
+standardize_plot.size = TRUE
 
 # set indicator names
 ind.names <- data.frame(
-       eiv_name_raw = c('EIV_M','EIV_N','EIV_T','EIV_L','EIV_R'),
-       eiv_name = c('Moisture', 'Nutrients', 'Temperature', 'Light', 'Soil reaction'))
+  eiv_name_raw = c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R'),
+  eiv_name = c('Light', 'Temperature', 'Moisture', 'Nitrogen', 'Reaction'))
 
 # source help functions 
 source('./src/0_helpfunctions.R')
-
-# folder where data with predictions (in .csv) were exported
-pth2preds <- './preds/'
 
 # folder where to store figures and diagnostic output
 pth2fig <- './fig/'
@@ -68,10 +70,12 @@ dat.year.ESy2 <- dat.year.ESy2 %>%
             min_yr = round(quantile(year, .05)))
 head(dat.year.ESy2)
 
-# set up response variable names
-ind.names <- data.frame(
-       eiv_name_raw = c('EIV_M','EIV_N','EIV_T','EIV_L','EIV_R'),
-       eiv_name = c('Moisture', 'Nutrients', 'Temperature', 'Light', 'Soil reaction'))
+# Interpolate changes using 2020 vs 1960? If FALSE get data back to 2020 - 1960 period
+interpolate_to_2020.1960 = FALSE
+if(interpolate_to_2020.1960) {
+  dat.year.ESy2$max_yr = 2020
+  dat.year.ESy2$min_yr = 1960
+}
 
 # function for 0-overlap test (calc. significant vs. non-significant CI)
 CI_overlap_test <- function(x, y) {
@@ -83,21 +87,23 @@ CI_overlap_test <- function(x, y) {
 
 #### 2. Predict ####
 # obtain average percentage changes per EUNIS-ESy habitat lev.2 and 95%CI
-res = list()
-for (ind.name in ind.names$eiv_name_raw) {
+for(ind.name in ind.names$eiv_name_raw) {
   print(paste0('Start interpolation for ', ind.name))
   
-  # set start time
   st = Sys.time()
-  
-  # prepare data
   dat = dat.initial
-  names(dat)[which(names(dat) == paste0('n.', ind.name))]  <- 'treshold'
+  
+  # assign names to focal EIV variables
+  names(dat)[which(names(dat) == paste0('n.', ind.name))] <-
+    'treshold'
   names(dat)[which(names(dat) == paste0('cm.', ind.name))] <- 'eiv'
+  
+  # apply filters accordingly to the raw data
+  treshold.of.EIVE.species = 0.8
   dat <- dat %>%
     filter(treshold >= treshold.of.EIVE.species)
   
-  # extract ESy2 and discard unwanted plots based on rare/unavailable habitats
+  # extract ESy2 and discard unwanted plots based on EUNIS-ESy level-2 habitat classification
   dat$ESy2 <- unname(sapply(dat$ESy, extract_habitat_lev2))
   dat <- dat %>%
     filter(!is.na(ESy2)) %>%
@@ -108,7 +114,7 @@ for (ind.name in ind.names$eiv_name_raw) {
   dat <- dat %>%
     select(plot_id, dataset, eiv, x, y, elev, year, ESy2, n, plot_size)
   
-  # calculate habitat plot size medians
+  # Calculate habitat plot size medians
   if (standardize_plot.size) {
     hab_plot.size <- dat %>%
       group_by(dataset, ESy2) %>%
@@ -116,27 +122,24 @@ for (ind.name in ind.names$eiv_name_raw) {
                 n_in_db = n()) %>%
       ungroup() %>%
       group_by(ESy2) %>%
-      summarise(plot_size_median = weightedMedian(x = plot_size_median_in_db, w = n_in_db))
+      summarise(plot_size_median = weightedMedian(x = plot_size_median_in_db, w =
+                                                    n_in_db))
   }
   
   # load model fit (ESy2-only models)
   pth_model <-
     list.files(
-      './code/data/models/ESy2models/',
+      './models/ESy2models/',
       pattern = paste0('RF.last_fit_', ind.name),
       full.names = T
     )
-  m <- pth_model %>%
+  m <-  pth_model %>%
     read_rds()
   
   # extract workflow for predictions
   m_wf <- extract_workflow(m)
   
-  ## temporal changes predictions in EVA ##
-  
-  pred_years <- c(1960, 2020) # work just on these two years
-  
-  # get predictions
+  # predict EIVs
   pred_dat <- dat
   for (i in c('min_yr', 'max_yr')) {
     cat(i, ' - ')
@@ -146,7 +149,8 @@ for (ind.name in ind.names$eiv_name_raw) {
       left_join(dat.year.ESy2[, names(dat.year.ESy2) %in% c('ESy2', i)], by =
                   'ESy2')
     names(pdi)[names(pdi) == i] <- 'year'
-    if (standardize_plot.size) { # standardize plot size to median by habitat?
+    if (standardize_plot.size) {
+      # standardize plot size to median by habitat?
       pdi <- pdi %>%
         select(-plot_size) %>%
         left_join(hab_plot.size, 'ESy2') %>%
@@ -156,15 +160,17 @@ for (ind.name in ind.names$eiv_name_raw) {
                                                 new_data = pdi) %>%  pull(.pred)
   }
   
+  # predict changes
   pred_focalchange <- pred_dat %>%
-    mutate(eiv_perc.change = 100 * ((eiv_pred_max_yr - eiv_pred_min_yr) / eiv_pred_min_yr)) %>%
+    mutate(eiv_abs.change = eiv_pred_max_yr - eiv_pred_min_yr) %>%
     select(-contains('_pred_'))
   
+  # summarize stats
   res.i <- pred_focalchange %>%
     group_by(ESy2) %>%
     summarise(
-      mean = mean(eiv_perc.change),
-      sd = sd(eiv_perc.change),
+      mean = mean(eiv_abs.change),
+      sd = sd(eiv_abs.change),
       n = n()
     ) %>%
     ungroup() %>%
@@ -173,13 +179,16 @@ for (ind.name in ind.names$eiv_name_raw) {
            uci = mean + (1.96 * se))
   res.i$significance <- CI_overlap_test(res.i$lci, res.i$uci)
   
+  # finalize table
   res.i <- res.i %>%
     mutate_if(is.numeric, round, 2) %>%
-    mutate(EIV = ind.names[ind.names$eiv_name_raw == ind.name, ]$eiv_name, .before = ESy2)
+    mutate(EIV = ind.names[ind.names$eiv_name_raw == ind.name, ]$eiv_name, .before =
+             ESy2)
   
+  # store results in the list
   res[[ind.name]] <- res.i
+  
 }
-
 
 #### 3. Format final table and export ####
 getESy1 <- \(ESy2.code){
