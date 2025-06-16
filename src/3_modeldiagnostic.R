@@ -12,15 +12,9 @@
 
 # define pretty names for EIV indicators (to be used in plots)
 ind.names <- data.frame(
-  eiv_name_raw = c('EIV_M', 'EIV_N', 'EIV_T', 'EIV_L', 'EIV_R'),
-  eiv_name = c(
-    'Moisture',
-    'Nutrients',
-    'Temperature',
-    'Light',
-    'Soil reaction'
-  )
-)
+  eiv_name_raw = c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R'),
+  eiv_name = c('Light', 'Temperature', 'Moisture', 'Nitrogen', 'Reaction'))
+
 
 # folder with model results
 pth2export <- './models/'
@@ -201,10 +195,10 @@ for (i in ind.names$eiv_name_raw) {
 
 # aggregate plots
 varimpres_plot <- cowplot::plot_grid(
+  varimpres$EIV_L,
+  varimpres$EIV_T,
   varimpres$EIV_M,
   varimpres$EIV_N,
-  varimpres$EIV_T,
-  varimpres$EIV_L,
   varimpres$EIV_R
 )
 
@@ -275,12 +269,7 @@ pred_test_plot <- ggplot(pred_test, aes(eiv, .pred)) +
   labs(x = expression(paste('Observed ', CM[EIV], ' (test set)')),
        y = expression(paste('Predicted ', CM[EIV])),
        fill = 'No. plots') +
-  geom_abline(
-    lty = 2,
-    color = 'red',
-    lwd = .5,
-    alpha = .8
-  ) +
+  geom_abline(lty = 2, color = 'red', lwd = .5, alpha = .8) +
   theme_bw() + theme(legend.position = 'bottom') +
   facet_wrap( ~ eiv_name, scales = 'free') +
   geom_text(
@@ -425,7 +414,7 @@ ggsave(
 
 #### 8. Correlations across predictions of change####
 dip <- list()
-for (i in c('EIV_M', 'EIV_N', 'EIV_T', 'EIV_L', 'EIV_R')) {
+for (i in c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')) {
   dip[[i]] <- paste0('./preds/',
                      i,
                      '.preds.rf.csv.gz') %>%
@@ -435,7 +424,7 @@ for (i in c('EIV_M', 'EIV_N', 'EIV_T', 'EIV_L', 'EIV_R')) {
 }
 
 eiv_abs.change_data <- list()
-for (i in c('EIV_M', 'EIV_N', 'EIV_T', 'EIV_L', 'EIV_R')) {
+for (i in c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')) {
   eiv_abs.change_data[[i]] <- dip[[i]] %>%
     select(plot_id, habitat, eiv_abs.change_1960.2020) %>%
     setNames(c('plot_id', 'habitat', i))

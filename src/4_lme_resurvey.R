@@ -17,6 +17,7 @@ suppressPackageStartupMessages({
   library(sf)
   library(lme4)
   library(emmeans)
+  library(rnaturalearth)
 })
 
 # load ReSurveyEurope data
@@ -155,9 +156,7 @@ p <- ggplot(res.dat, aes(
   ) + 
   geom_hline(yintercept = 0, lty=2, color='grey') +
   geom_pointrange(aes(ymin=asymp.LCL, ymax=asymp.UCL), fatten = 3) +
-  facet_wrap(~habitat
-             #, scales='free'
-  ) +
+  facet_wrap(~habitat) +
   coord_flip() +
   labs(y=expression(paste(Delta, ' CM', ''[EIV], ' per decade')), x='') +
   theme_bw() +
@@ -176,11 +175,65 @@ p
 # folder where to store figures 
 pth2fig <- './fig/'
 
-# export
+# export figure
 ggsave('ReSurv.LME.change.svg', 
        p, 
        path = pth2fig,
        width = 7, height = 7)
+
+## Plot re-survey location (mini-maps) ##
+regions_name <- c('Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria',
+                  'Corsica', 'Crete', 'Croatia', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany',
+                  'Greece', 'Hungary', 'Ireland', 'Italy', 'Kosovo', 'Latvia', 'Liechtenstein',
+                  'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Montenegro', 'Netherlands', 'North Macedonia',
+                  'Norway', 'Poland', 'Portugal', 'Romania', 'Sardinia', 'Serbia', 'Sicily',
+                  'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Ukraine', 'United Kingdom')
+bbox_coords <- c(
+  xmin = -1123055,
+  ymin = 3923814,
+  xmax = 2796649,
+  ymax = 8007282
+)
+EU <- ne_countries(scale = 'large', returnclass = 'sf') %>%
+  filter(name %in% regions_name) %>%
+  st_transform(crs = 25832) %>%
+  st_crop(bbox_coords) %>%
+  select(geometry)
+
+grd_size_km = 75 # grid size
+for (i in c('Forest', 'Grassland', 'Scrub', 'Wetland')) {
+  # plot occupancy for each habitat
+  dip <- d.initial %>%
+    filter(habitat == i) %>%
+    select(resurv_id, x_mean, y_mean) %>%
+    unique()
+  dipspat <- st_as_sf(dip,
+                      coords = c('x_mean', 'y_mean'),
+                      crs = st_crs(EU))
+  grd <- st_make_grid(EU, cellsize = c(grd_size_km * 1000, grd_size_km *
+                                         1000)) %>%
+    st_as_sf()
+  dip_grid <- st_filter(grd, dipspat)
+  phab <- ggplot() +
+    geom_sf(data = EU,
+            col = NA,
+            fill = '#2d3068') +
+    geom_sf(data = dip_grid,
+            fill = 'red',
+            col = NA) +
+    theme_void() +
+    theme(legend.position = 'none') +
+    theme(panel.background = element_rect(colour = 'black', fill = 'grey85')) +
+    ggtitle(paste0('n = ', nrow(dip) %>% prettyNum(big.mark = ",")))
+  
+  ggsave(
+    paste0('ReSurv.minimap.grid.', i, '.pdf'),
+    phab,
+    path = pth2fig,
+    width = 2,
+    height = 2
+  )
+}
 
 # quit
 quit(save = 'no')
