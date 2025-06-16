@@ -30,6 +30,9 @@ ind.names <- data.frame(
 # source help functions 
 source('./src/0_helpfunctions.R')
 
+# folder where data with predictions (in .csv) were exported
+pth2preds <- './preds/'
+
 # folder where to store figures and diagnostic output
 pth2fig <- './fig/'
 
@@ -81,12 +84,13 @@ if(interpolate_to_2020.1960) {
 CI_overlap_test <- function(x, y) {
   zero_check <- (x == 0 & y == 0)
   sign_check <- (x > 0 & y > 0) | (x < 0 & y < 0)
-  res <- zero_check | sign_check
-  return(res)
+  tst <- zero_check | sign_check
+  return(tst)
 }
 
 #### 2. Predict ####
 # obtain average percentage changes per EUNIS-ESy habitat lev.2 and 95%CI
+res <- list()
 for(ind.name in ind.names$eiv_name_raw) {
   print(paste0('Start interpolation for ', ind.name))
   
@@ -188,61 +192,139 @@ for(ind.name in ind.names$eiv_name_raw) {
 }
 
 #### 3. Format final table and export ####
-getESy1 <- \(ESy2.code){
-  str=substr(ESy2.code,1,1)
-  if(str == 'T'){return('Forest')}
-  if(str == 'R'){return('Grassland')}
-  if(str == 'S'){return('Scrub')}
-  if(str == 'Q'){return('Wetland')}
+getESy1 <- \(ESy2.code) {
+  str = substr(ESy2.code, 1, 1)
+  if (str == 'T') {
+    return('Forest')
+  }
+  if (str == 'R') {
+    return('Grassland')
+  }
+  if (str == 'S') {
+    return('Scrub')
+  }
+  if (str == 'Q') {
+    return('Wetland')
+  }
 }
-res1 <- res %>%
- map(\(x){
-  x %>%
-  mutate(ci = uci - mean) %>%
-  mutate(sign = ifelse(.$significance, '', 'n.s.')) %>%
-  mutate(res.sum = paste0(mean, '±(', round(ci, 2),')', sign)) %>%
-  select(ESy2, EIV, res.sum) %>%
-  spread(EIV, res.sum) %>%
-  mutate(`Habitat type` = unname(sapply(.$ESy2, getESy1)), .before=ESy2) %>%
-  arrange(`Habitat type`)
- })
 
-res_n <- bind_rows(res) %>% 
+res_spread <- res %>%
+  map(\(x) {
+    x %>%
+      select(ESy2, EIV, mean) %>%
+      spread(EIV, mean) %>%
+      mutate(`Habitat type` = unname(sapply(.$ESy2, getESy1)), .before =
+               ESy2) %>%
+      arrange(`Habitat type`)
+  })
+
+res_n <- bind_rows(res) %>%
   group_by(ESy2) %>% summarise(n_median = median(n)) %>% ungroup() %>%
-  mutate(`Habitat type` = unname(sapply(.$ESy2, getESy1)), .before=ESy2) %>%
-  arrange(`Habitat type`) 
+  mutate(`Habitat type` = unname(sapply(.$ESy2, getESy1)), .before = ESy2) %>%
+  arrange(`Habitat type`)
 
 res_fin <- res_n %>%
-           left_join(res1$EIV_M) %>%
-           left_join(res1$EIV_N) %>%
-           left_join(res1$EIV_T) %>%
-           left_join(res1$EIV_L) %>%
-           left_join(res1$EIV_R)
+  left_join(res_spread$EIV_L, by = join_by(`Habitat type`, ESy2)) %>%
+  left_join(res_spread$EIV_T, by = join_by(`Habitat type`, ESy2)) %>%
+  left_join(res_spread$EIV_M, by = join_by(`Habitat type`, ESy2)) %>%
+  left_join(res_spread$EIV_N, by = join_by(`Habitat type`, ESy2)) %>%
+  left_join(res_spread$EIV_R, by = join_by(`Habitat type`, ESy2)) %>%
+  left_join(hab_plot.size, by = join_by(ESy2)) %>%
+  select(1, 2, plot_size_median, everything())
 
 pretty_years <- dat.year.ESy2 %>%
- mutate(Years = paste0(min_yr,'-',max_yr)) %>%
- select(ESy2, Years)
+  mutate(Years = paste0(min_yr, '-', max_yr)) %>%
+  select(ESy2, Years)
 
 res_fin <- res_fin %>%
   left_join(pretty_years, 'ESy2') %>%
   select(1:2, Years, everything())
 
-# load pretty ESy2-names
-hab.names <- readxl::read_excel('EUNIS_ESy2_habitat.names.xlsx', col_names = F) %>%
+# load ESy2 names table
+hab.names <-
+  readxl::read_excel('./EUNIS_ESy2_habitat.names.xlsx', col_names = F) %>%
   setNames('Habitat name') %>%
   mutate(ESy2 = substr(`Habitat name`, 1, 2)) %>%
-  mutate(`Habitat name`=substr(`Habitat name`, 4, nchar(`Habitat name`)))
+  mutate(`Habitat name` = substr(`Habitat name`, 4, nchar(`Habitat name`)))
 
 res_fin <- res_fin %>%
   left_join(hab.names) %>%
-  select(1:2, `Habitat name`, everything())
+  select(1:3, `Habitat name`, everything())
 
-# export
 res_fin %>%
- select(-ESy2) %>%
- rename(`no. plots`=n_median) %>%
- flextable::flextable() %>% 
- flextable::save_as_docx(path = paste0(pth2fig, 'habitat_ESy2_means.docx'))
+  select(Light:Reaction) %>%
+  gather('k', 'v') %>%
+  ggplot(aes(x = v)) +
+  geom_histogram()
+
+# export table with sign chars (without background color shades)
+ft_dat <- res_fin %>%
+  select(-ESy2) %>%
+  rename(`no. plots` = n_median) %>%
+  mutate(plot_size_median = round(plot_size_median, 0)) %>%
+  mutate(
+    Light = ifelse(Light > 0, paste0('+', Light), as.character(Light)) %>% str_pad(
+      width = 5,
+      side = c('right'),
+      pad = '0'
+    ),
+    Temperature = ifelse(
+      Temperature > 0,
+      paste0('+', Temperature),
+      as.character(Temperature)
+    ) %>% str_pad(
+      width = 5,
+      side = c('right'),
+      pad = '0'
+    ),
+    Moisture = ifelse(Moisture > 0, paste0('+', Moisture), as.character(Moisture)) %>% str_pad(
+      width = 5,
+      side = c('right'),
+      pad = '0'
+    ),
+    Nitrogen = ifelse(Nitrogen > 0, paste0('+', Nitrogen), as.character(Nitrogen)) %>% str_pad(
+      width = 5,
+      side = c('right'),
+      pad = '0'
+    ),
+    Reaction = ifelse(Reaction > 0, paste0('+', Reaction), as.character(Reaction)) %>% str_pad(
+      width = 5,
+      side = c('right'),
+      pad = '0'
+    )
+  ) %>%
+  rename(`Plot size` = plot_size_median)
+ft_dat[ft_dat == '00000'] <- '0.00'
+
+flextable(ft_dat) %>%
+  save_as_docx(path = paste0(pth2preds, 'habitat_ESy2_means.docx'))
+
+# export table with background color shades
+ft_dat <- res_fin %>%
+  select(-ESy2) %>%
+  rename(`no. plots` = n_median) %>%
+  mutate(plot_size_median = round(plot_size_median, 0)) %>%
+  rename(`Plot size` = plot_size_median)
+
+ft = ft_dat %>%
+  flextable()
+
+for (i in ind.names$eiv_name) {
+  colpa <- c('#8395ce', '#d0e2de', '#ffffff', '#fac863', '#d15e6b')
+  colorer <- col_bin(
+    palette = colpa,
+    bins = c(-Inf,-0.2,-0.1, 0.1, 0.2, Inf),
+    domain = c(min(res_fin[[i]], na.rm = TRUE), max(res_fin[[i]], na.rm = TRUE)),
+    # Provide the actual domain
+    right = TRUE,
+    reverse = F
+  )
+  ft <- ft %>%
+    bg(j = i, bg = colorer, part = 'body')
+}
+
+ft %>%
+  flextable::save_as_docx(path = paste0(pth2preds, 'habitat_ESy2_means_BGcol.docx'))
 
 # quit
 quit(save = 'no')
