@@ -16,8 +16,8 @@ suppressPackageStartupMessages({
 
 # set indicator names
 ind.names <- data.frame(
-  eiv_name_raw = c('EIV_M','EIV_N','EIV_T','EIV_L','EIV_R'),
-  eiv_name = c('Moisture', 'Nutrients', 'Temperature', 'Light', 'Soil reaction'))
+  eiv_name_raw = c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R'),
+  eiv_name = c('Light', 'Temperature', 'Moisture', 'Nitrogen', 'Reaction'))
 
 # source help functions 
 source('./src/0_helpfunctions.R')
@@ -289,13 +289,47 @@ for(k in names(dat)) {
 }
 
 # combine plots into a grid
-cp <- plot_grid(
-       p.hists$Moisture, p.hists$Nutrients, p.hists$Temperature, p.hists$Light, p.hists$`Soil reaction`,
-       p_means.1960$Forest$Moisture,p_means.1960$Forest$Nutrients,p_means.1960$Forest$Temperature,p_means.1960$Forest$Light,p_means.1960$Forest$`Soil reaction`,
-       p_means.1960$Grassland$Moisture,p_means.1960$Grassland$Nutrients,p_means.1960$Grassland$Temperature,p_means.1960$Grassland$Light,p_means.1960$Grassland$`Soil reaction`,
-       p_means.1960$Scrub$Moisture,p_means.1960$Scrub$Nutrients,p_means.1960$Scrub$Temperature,p_means.1960$Scrub$Light,p_means.1960$Scrub$`Soil reaction`,
-       p_means.1960$Wetland$Moisture,p_means.1960$Wetland$Nutrients,p_means.1960$Wetland$Temperature,p_means.1960$Wetland$Light,p_means.1960$Wetland$`Soil reaction`,
-       cols=5, rows=5)
+cp <- cowplot::plot_grid(
+  # Row 1: Histograms
+  p.hists$Light,
+  p.hists$Temperature,
+  p.hists$Moisture,
+  p.hists$Nitrogen,   
+  p.hists$Reaction,
+  
+  # Row 2: Forest means
+  p_means.1960$Forest$Light,
+  p_means.1960$Forest$Temperature,
+  p_means.1960$Forest$Moisture,
+  p_means.1960$Forest$Nitrogen,
+  p_means.1960$Forest$Reaction,
+  
+  # Row 3: Grassland means
+  p_means.1960$Grassland$Light,
+  p_means.1960$Grassland$Temperature,
+  p_means.1960$Grassland$Moisture,
+  p_means.1960$Grassland$Nitrogen,
+  p_means.1960$Grassland$Reaction,
+  
+  # Row 4: Scrub means
+  p_means.1960$Scrub$Light,
+  p_means.1960$Scrub$Temperature,
+  p_means.1960$Scrub$Moisture,
+  p_means.1960$Scrub$Nitrogen,
+  p_means.1960$Scrub$Reaction,
+  
+  # Row 5: Wetland means
+  p_means.1960$Wetland$Light,
+  p_means.1960$Wetland$Temperature,
+  p_means.1960$Wetland$Moisture,
+  p_means.1960$Wetland$Nitrogen,
+  p_means.1960$Wetland$Reaction,
+  
+  cols = 5,
+  rows = 5
+)
+
+cp
 
 # export figure
 ggsave(paste0(pth2fig, 'average.trends.from1960.svg'), cp, width = 8, height = 7.5)

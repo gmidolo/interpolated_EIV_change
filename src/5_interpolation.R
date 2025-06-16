@@ -55,7 +55,7 @@ glimpse(hab_plot.size)
 
 #### 2. Interpolate EIV change metrics ####
 # set up response variable names
-ind.names <- c('EIV_M','EIV_N','EIV_T','EIV_L','EIV_R')
+ind.names <- c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')
 
 # start interpolating (predicting) EIVs
 for(ind.name in ind.names){
@@ -83,10 +83,13 @@ for(ind.name in ind.names){
       select(plot_id, eiv, x, y, elev, year, habitat, n, plot_size)
 
   # path to focal model
-  pth_model <- list.files(pth2export, pattern = paste0('RF.last_fit_',ind.name), full.names = T)
+  pth_model <-
+    list.files(pth2export,
+               pattern = paste0('RF.last_fit_', ind.name),
+               full.names = T)
   
   # load model
-  m <- pth_model %>%  read_rds()
+  m <- pth_model %>% read_rds()
 
   # extract workflow for predictions
   m_wf <- extract_workflow(m)
@@ -102,6 +105,7 @@ for(ind.name in ind.names){
   
   # start predicting for each year
   for (i in pred_years) {
+    # cat(i, ' - ')
     pdi <- pred_dat
     pdi <- pdi %>% mutate(year = i) # change year
     if (standardize_plot.size) { # standardize plot size to median by habitat?

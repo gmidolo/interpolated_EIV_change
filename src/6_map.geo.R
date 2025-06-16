@@ -21,8 +21,8 @@ suppressPackageStartupMessages({
 
 # set indicator names
 ind.names <- data.frame(
-  eiv_name_raw = c('EIV_M','EIV_N','EIV_T','EIV_L','EIV_R'),
-  eiv_name = c('Moisture', 'Nutrients', 'Temperature', 'Light', 'Soil reaction'))
+  eiv_name_raw = c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R'),
+  eiv_name = c('Light', 'Temperature', 'Moisture', 'Nitrogen', 'Reaction'))
 
 # source help functions 
 source('./src/0_helpfunctions.R')

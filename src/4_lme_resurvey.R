@@ -48,7 +48,7 @@ d.initial <- d.initial %>%
               filter(hab_change), 'resurv_id')
 
 # set ind names to analyze
-ind.names <- c('EIV_M', 'EIV_N', 'EIV_T', 'EIV_L', 'EIV_R')
+ind.names <- c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')
 
 # set minimum proportion of species with available EIV to include a plot in the analyses
 treshold.of.EIVE.species = 0.8
@@ -133,18 +133,19 @@ for (ind.name in ind.names) {
 
 #### 3. Plot LME coefficients ####
 # aggregate model results
+
 res.dat <-
   res %>% 
   map(as.data.frame) %>% 
   bind_rows(.id = 'ind.name') %>%
   left_join(data.frame(
-    ind.name = c('EIV_M', 'EIV_N', 'EIV_T', 'EIV_L', 'EIV_R'),
-    eiv_name = c('Moisture','Nutrients','Temperature','Light','Soil reaction')), 
+    ind.name = c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R'),
+    eiv_name = c('Light', 'Temperature', 'Moisture', 'Nitrogen', 'Reaction')), 
     by = 'ind.name')
 
 # transform EIV variables to factor
 res.dat$eiv_name <-
-  factor(res.dat$eiv_name, rev(c('Moisture','Nutrients','Temperature','Light','Soil reaction')))
+  factor(res.dat$eiv_name, rev(c('Light', 'Temperature', 'Moisture', 'Nitrogen', 'Reaction')))
 
 # visualize results
 p <- ggplot(res.dat, aes(
@@ -158,7 +159,7 @@ p <- ggplot(res.dat, aes(
              #, scales='free'
   ) +
   coord_flip() +
-  labs(y=expression(paste(Delta, " CM", ""[EIV], " per decade")), x='') +
+  labs(y=expression(paste(Delta, ' CM', ''[EIV], ' per decade')), x='') +
   theme_bw() +
   theme(
     axis.title.y = element_blank(),
@@ -169,6 +170,8 @@ p <- ggplot(res.dat, aes(
     strip.background = element_blank()
   ) +
   scale_color_manual(values=RColorBrewer::brewer.pal(5,'Dark2'))
+
+p
 
 # folder where to store figures 
 pth2fig <- './fig/'

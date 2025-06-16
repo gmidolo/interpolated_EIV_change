@@ -324,7 +324,7 @@ for (i in ind.names$eiv_name) {
 }
 
 ft %>%
-  flextable::save_as_docx(path = paste0(pth2preds, 'habitat_ESy2_means_BGcol.docx'))
+  save_as_docx(path = paste0(pth2preds, 'habitat_ESy2_means_BGcol.docx'))
 
 # quit
 quit(save = 'no')
