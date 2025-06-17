@@ -412,32 +412,54 @@ ggsave(
 )
 
 #### 8. Correlations across predictions of change####
+dat.initial <-
+  bind_rows(
+    read_csv('./data/EVA.csv.xz', show_col_types = F), # Load EVA data
+    format_ReSurveyEurope( # Load ReSurveyEU (static, using one random point in the survey)
+      training_strategy = 'random',
+      path_resurvey_clean = './data/ReSurveyEU_clean.csv.xz'
+    )[['traintest_data']]  
+  )
 
-eiv_abs.change_data <- list()
-for (i in ind.names$eiv_name_raw) {
-  eiv_abs.change_data[[i]] <- paste0('./preds/', i, '.preds.rf.csv.gz') %>%
-    read_csv(show_col_types = F, col_select = c(plot_id, habitat, eiv_abs.change_1960.2020)) %>%
-    setNames(c('plot_id', 'habitat', i))
+dat <- ind.names$eiv_name_raw %>%
+  map(\(ind.name){
+    # get plot id to discard
+    th <- dat.initial[,c('plot_id', paste0('n.', ind.name))] %>%
+      setNames(c('plot_id','th')) %>%
+      filter(th<0.8)
+    # get predictions
+    y <- paste0('./preds/', ind.name, '.preds.rf.csv.gz') %>%
+      read_csv(show_col_types = F) %>%
+      filter(year >= 1960 & year <= 2020) %>%
+      select(plot_id, habitat, eiv_abs.change_1960.2020) %>%
+      arrange(plot_id) %>%
+      anti_join(th, 'plot_id')
+    return(y)
+  })
+
+# set new names
+names(dat) <- ind.names$eiv_name
+for (i in names(dat)) {
+  dat[[i]] <- dat[[i]] %>% setNames(c('plot_id','habitat',i))
 }
-eiv_abs.change_data <- reduce(eiv_abs.change_data, left_join, by = c('plot_id', 'habitat'))
-head(eiv_abs.change_data)
 
-abbreviated_eivs <- str_sub(ind.names$eiv_name,1,5)
-abbreviated_eivs <- ifelse(
-  abbreviated_eivs %in% ind.names$eiv_name, abbreviated_eivs, paste0(abbreviated_eivs, '.')             
-)
+# reduce list of tibbles with a full join
+dat <- reduce(dat, full_join, by=c('plot_id','habitat'))
+nrow(dat)
 
+# plot
 plot_commlevel <- list()
 for (h in c('Forest', 'Grassland', 'Scrub', 'Wetland')) {
-  plot_commlevel[[h]] <- eiv_abs.change_data %>%
+  plot_commlevel[[h]] <- dat %>%
     filter(habitat == h) %>%
-    select(contains('EIV')) %>%
-    setNames(abbreviated_eivs) %>%
+    select(-plot_id, -habitat) %>%
+    setNames(c('Light', 'Tempe.', 'Moist.', 'Nitro.', 'React.')) %>%
     plot.inc.cor() +
     ggtitle(h) +
     theme(title = element_text(face = 2))
 }
 
+# combine plot
 cp <- cowplot::plot_grid(
   plot_commlevel$Forest,
   plot_commlevel$Grassland,
