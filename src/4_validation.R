@@ -31,7 +31,7 @@ pth2valid <- './validation/'
 source('./src/0_helpfunctions.R')
 
 # Set up response variable names
-ind.names <- c('EIV_M','EIV_N','EIV_T','EIV_L','EIV_R')
+ind.names <- c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')
 
 # Set number of iterations
 reps = 100

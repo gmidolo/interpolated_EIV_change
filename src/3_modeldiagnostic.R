@@ -115,6 +115,7 @@ tune_res_plot <- ggplot(tune_res_tidy, aes(x = value, y = mean, col = `Minimal N
   theme(axis.title.y = element_blank(), legend.position = 'top') +
   labs(x = 'mtry') +
   scale_y_continuous()
+tune_res_plot
 
 # export
 ggsave(
@@ -194,11 +195,7 @@ for (i in ind.names$eiv_name_raw) {
 
 # aggregate plots
 varimpres_plot <- cowplot::plot_grid(
-  varimpres$EIV_L,
-  varimpres$EIV_T,
-  varimpres$EIV_M,
-  varimpres$EIV_N,
-  varimpres$EIV_R
+  varimpres$EIV_L,varimpres$EIV_T,varimpres$EIV_M,varimpres$EIV_N,varimpres$EIV_R
 )
 
 # export
