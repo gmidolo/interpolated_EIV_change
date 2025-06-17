@@ -470,3 +470,94 @@ run_validation_RF <- \(
   return(res)
   
 }
+
+#### set of functions to plot corr matrices ####
+getsamplesize <- function(vec_a, vec_b) {
+  nrow(drop_na(data.frame(vec_a, vec_b)))
+}
+firstup <- function(x) {
+  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
+  x
+}
+get_lower_tri <- function(cormat) {
+  cormat[upper.tri(cormat)] <- NA
+  return(cormat)
+}
+get_upper_tri <- function(cormat) {
+  cormat[lower.tri(cormat)] <- NA
+  return(cormat)
+}
+plot.inc.cor <- function(mat,
+                         round.label.digit = 2,
+                         cor.method = 'pearson',
+                         size.label = 4) {
+  corm <- cor(mat, method = cor.method, use = "pairwise.complete.obs")
+  
+  pcorm <- cor(mat, method = cor.method, use = "pairwise.complete.obs") %>%
+    get_lower_tri %>%
+    reshape2::melt()
+  pcorm$value = ifelse(pcorm$Var1 == pcorm$Var2, NA, pcorm$value)
+  psams <- corrr::colpair_map(mat, getsamplesize) %>%
+    as.data.frame %>%
+    tibble::column_to_rownames('term') %>%
+    as.matrix %>%
+    get_upper_tri %>%
+    reshape2::melt() %>%
+    setNames(names(pcorm))
+  
+  psams$value = ifelse(is.na(psams$value),
+                       NA,
+                       prettyNum(psams$value, big.mark = ',', scientific = F))
+  
+  pcorm$value = round(pcorm$value, round.label.digit)
+  # Format the numeric values with two decimal places
+  pcorm$formatted_value <- sprintf(paste0('%.', round.label.digit, 'f'), pcorm$value)
+  pcorm$formatted_value <- ifelse(pcorm$formatted_value == 'NA', NA, pcorm$formatted_value)
+  
+  p <- ggplot() +
+    geom_tile(data = pcorm,
+              aes(x = Var1, y = Var2, fill = value),
+              color = 'grey80') +
+    geom_text(
+      data = psams,
+      aes(x = Var1, y = Var2, label = value),
+      color = "black",
+      size = size.label
+    ) +
+    geom_text(
+      data = pcorm,
+      aes(x = Var1, y = Var2, label = formatted_value),
+      color = "black",
+      size = size.label
+    ) +
+    scale_fill_gradient2(
+      low = "#4A6FE3",
+      mid = "white",
+      high = "#D33F6A",
+      midpoint = 0,
+      limit = c(-1, 1),
+      space = "Lab",
+      na.value = 'white',
+      name = paste0(firstup(cor.method), '\ncorrelation')
+    ) +
+    theme_classic() +
+    guides(alpha = 'none') +
+    theme(
+      axis.text.x = element_text(
+        size = 12,
+        angle = 45,
+        vjust = 1,
+        hjust = 1,
+        color = 'black'
+      ),
+      axis.text.y = element_text(size = 12, color = 'black'),
+      axis.title = element_blank(),
+      axis.line = element_blank(),
+      panel.background = element_rect(fill = "white", colour = "white")
+    ) +
+    coord_fixed() +
+    geom_abline(slope = 1,
+                intercept = 0,
+                color = 'grey80')
+  return(p)
+}

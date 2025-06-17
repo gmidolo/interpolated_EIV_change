@@ -15,6 +15,8 @@ ind.names <- data.frame(
   eiv_name_raw = c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R'),
   eiv_name = c('Light', 'Temperature', 'Moisture', 'Nitrogen', 'Reaction'))
 
+# source help functions 
+source('./src/0_helpfunctions.R')
 
 # folder with model results
 pth2export <- './models/'
@@ -33,8 +35,6 @@ suppressPackageStartupMessages({
   library(rnaturalearth)
 })
 
-# source functions to format Resurvey data
-source('./src/0_helpfunctions.R')
 
 # prepare data for modeling and split train and test dataset
 set.seed(123)
@@ -168,8 +168,7 @@ pretty_vars <- data.frame(
 # retrieve var. importance via vip::vip()
 var_imp <- m %>%
   map(\(x) {
-    (
-      extract_workflow(x) %>%
+    (extract_workflow(x) %>%
         extract_fit_parsnip() %>%
         vip(geom = 'col') %>%
         ggplot_build()
@@ -413,121 +412,27 @@ ggsave(
 )
 
 #### 8. Correlations across predictions of change####
-dip <- list()
-for (i in c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')) {
-  dip[[i]] <- paste0('./preds/',
-                     i,
-                     '.preds.rf.csv.gz') %>%
-    read_csv(show_col_types = F) %>%
-    select(plot_id, habitat, contains('1960.2020'), lm.slope_estimate) %>%
-    mutate(eiv_name_raw = i)
-}
 
 eiv_abs.change_data <- list()
-for (i in c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')) {
-  eiv_abs.change_data[[i]] <- dip[[i]] %>%
-    select(plot_id, habitat, eiv_abs.change_1960.2020) %>%
+for (i in ind.names$eiv_name_raw) {
+  eiv_abs.change_data[[i]] <- paste0('./preds/', i, '.preds.rf.csv.gz') %>%
+    read_csv(show_col_types = F, col_select = c(plot_id, habitat, eiv_abs.change_1960.2020)) %>%
     setNames(c('plot_id', 'habitat', i))
 }
 eiv_abs.change_data <- reduce(eiv_abs.change_data, left_join, by = c('plot_id', 'habitat'))
 head(eiv_abs.change_data)
 
-getsamplesize <- function(vec_a, vec_b) {
-  nrow(drop_na(data.frame(vec_a, vec_b)))
-}
-firstup <- function(x) {
-  substr(x, 1, 1) <- toupper(substr(x, 1, 1))
-  x
-}
-get_lower_tri <- function(cormat) {
-  cormat[upper.tri(cormat)] <- NA
-  return(cormat)
-}
-get_upper_tri <- function(cormat) {
-  cormat[lower.tri(cormat)] <- NA
-  return(cormat)
-}
-plot.inc.cor <- function(mat,
-                         round.label.digit = 2,
-                         cor.method = 'pearson',
-                         size.label = 4) {
-  corm <- cor(mat, method = cor.method, use = "pairwise.complete.obs")
-  
-  pcorm <- cor(mat, method = cor.method, use = "pairwise.complete.obs") %>%
-    get_lower_tri %>%
-    reshape2::melt()
-  pcorm$value = ifelse(pcorm$Var1 == pcorm$Var2, NA, pcorm$value)
-  psams <- corrr::colpair_map(mat, getsamplesize) %>%
-    as.data.frame %>%
-    tibble::column_to_rownames('term') %>%
-    as.matrix %>%
-    get_upper_tri %>%
-    reshape2::melt() %>%
-    setNames(names(pcorm))
-  
-  psams$value = ifelse(is.na(psams$value),
-                       NA,
-                       prettyNum(psams$value, big.mark = ',', scientific = F))
-  
-  pcorm$value = round(pcorm$value, round.label.digit)
-  # Format the numeric values with two decimal places
-  pcorm$formatted_value <- sprintf(paste0('%.', round.label.digit, 'f'), pcorm$value)
-  pcorm$formatted_value <- ifelse(pcorm$formatted_value == 'NA', NA, pcorm$formatted_value)
-  
-  p <- ggplot() +
-    geom_tile(data = pcorm,
-              aes(x = Var1, y = Var2, fill = value),
-              color = 'grey80') +
-    geom_text(
-      data = psams,
-      aes(x = Var1, y = Var2, label = value),
-      color = "black",
-      size = size.label
-    ) +
-    geom_text(
-      data = pcorm,
-      aes(x = Var1, y = Var2, label = formatted_value),
-      color = "black",
-      size = size.label
-    ) +
-    scale_fill_gradient2(
-      low = "#4A6FE3",
-      mid = "white",
-      high = "#D33F6A",
-      midpoint = 0,
-      limit = c(-1, 1),
-      space = "Lab",
-      na.value = 'white',
-      name = paste0(firstup(cor.method), '\ncorrelation')
-    ) +
-    theme_classic() +
-    guides(alpha = 'none') +
-    theme(
-      axis.text.x = element_text(
-        size = 12,
-        angle = 45,
-        vjust = 1,
-        hjust = 1,
-        color = 'black'
-      ),
-      axis.text.y = element_text(size = 12, color = 'black'),
-      axis.title = element_blank(),
-      axis.line = element_blank(),
-      panel.background = element_rect(fill = "white", colour = "white")
-    ) +
-    coord_fixed() +
-    geom_abline(slope = 1,
-                intercept = 0,
-                color = 'grey80')
-  return(p)
-}
+abbreviated_eivs <- str_sub(ind.names$eiv_name,1,5)
+abbreviated_eivs <- ifelse(
+  abbreviated_eivs %in% ind.names$eiv_name, abbreviated_eivs, paste0(abbreviated_eivs, '.')             
+)
 
 plot_commlevel <- list()
 for (h in c('Forest', 'Grassland', 'Scrub', 'Wetland')) {
   plot_commlevel[[h]] <- eiv_abs.change_data %>%
     filter(habitat == h) %>%
     select(contains('EIV')) %>%
-    setNames(c('Moist.', 'Nutr.', 'Temp.', 'Light', 'Reac.')) %>%
+    setNames(abbreviated_eivs) %>%
     plot.inc.cor() +
     ggtitle(h) +
     theme(title = element_text(face = 2))
