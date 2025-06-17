@@ -65,13 +65,20 @@ names(dat) <- ind.names$eiv_name
 # get plot counts
 dat %>% bind_rows() %>% select(plot_id) %>% unique() %>% nrow()
 
-# get general trends everywhere
-dat %>% map(\(x){mean(x$eiv_perc.change_1960.2020)})
+# percentage of plots with EIV increments above or equal 0.1
+dat %>% map(\(x) {
+  round(prop.table(table(x$eiv_abs.change_1960.2020 >= 0.1))*100, 2)
+})
+
+# percentage of plots with EIV decrements below or equal -0.1
+dat %>% map(\(x) {
+  round(prop.table(table(x$eiv_abs.change_1960.2020 <= -0.1))*100, 2)
+})
 
 # get general trends by ESy lev-1
-dat %>% map(\(x){x %>% group_by(habitat) %>% summarise(mean.perc=mean(eiv_perc.change_1960.2020))})
+dat %>% map(\(x){x %>% group_by(habitat) %>% summarise(mean.eiv.change=mean(eiv_abs.change_1960.2020))})
   
-### define periods
+# define periods
 periods <- c('From 1960 to 1980', 'From 1980 to 2000', 'From 2000 to 2020', 'From 1960 to 2020')
 period.dat <- data.frame(
   periods=periods,
