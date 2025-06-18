@@ -90,7 +90,8 @@ CI_overlap_test <- function(x, y) {
 
 #### 2. Predict ####
 # obtain average percentage changes per EUNIS-ESy habitat lev.2 and 95%CI
-res <- list()
+res <- list() # results of summary stats
+ab01 <- list() # results measuring percentages of plots with CMEIV change >= 0.1 and <= -0.1 
 for(ind.name in ind.names$eiv_name_raw) {
   print(paste0('Start interpolation for ', ind.name))
   
@@ -165,6 +166,29 @@ for(ind.name in ind.names$eiv_name_raw) {
   pred_focalchange <- pred_dat %>%
     mutate(eiv_abs.change = eiv_pred_max_yr - eiv_pred_min_yr) %>%
     select(-contains('_pred_'))
+  
+  # percentages of plots with CMEIV change <= -0.1 and >= 0.1
+  ab01[[ind.name]] <- pred_focalchange %>%
+    mutate(
+      perc.below_e_0.1 = cut(eiv_abs.change, breaks = c(-Inf,-0.1,Inf), labels = c(1,0), include.lowest = F),
+      perc.above_e_0.1 = cut(eiv_abs.change, breaks = c(-Inf,0.1,Inf), labels = c(0,1),  include.lowest = T),
+    ) %>%
+    gather('k','v',contains('0.1')) %>%
+    group_by(ESy2, k,v) %>%
+    summarise(
+      n=n()
+    ) %>%
+    group_by(ESy2, k) %>%
+    mutate(
+      sum=sum(n)
+    ) %>%
+    filter(v==1) %>%
+    select(-v) %>%
+    mutate(
+      percs = round((n/sum)*100, 2)
+    ) %>%
+    select(-n,-sum) %>%
+    spread(k,percs) 
   
   # summarize stats
   res.i <- pred_focalchange %>%
@@ -325,6 +349,28 @@ for (i in ind.names$eiv_name) {
 
 ft %>%
   save_as_docx(path = paste0(pth2preds, 'habitat_ESy2_means_BGcol.docx'))
+
+# Inspects percentages of plots with CMEIV change >= 0.1 and <= -0.1 
+ab01_res <- ab01 %>%
+  bind_rows(.id = 'eiv_name_raw') %>%
+  left_join(ind.names) %>%
+  left_join(hab.names) %>%
+  left_join(res_n) %>%
+  rename(`no. plots` = n_median) %>%
+  mutate(`no. plots` = round(`no. plots`)) %>%
+  ungroup() 
+a01 <- ab01_res %>%
+  select(`Habitat type`, `Habitat name`, `no. plots`, eiv_name, perc.above_e_0.1) %>%
+  spread(4, 5)
+b01 <- ab01_res %>%
+  select(`Habitat type`, `Habitat name`, `no. plots`, eiv_name, perc.below_e_0.1) %>%
+  spread(4, 5)
+a01 %>%
+  flextable() %>%
+  save_as_docx(path = paste0(pth2preds, 'habitat_ESy2_perc.above_e_0.1.docx'))
+b01 %>%
+  flextable() %>%
+  save_as_docx(path = paste0(pth2preds, 'habitat_ESy2_perc.below_e_0.1.docx'))
 
 # quit
 quit(save = 'no')
