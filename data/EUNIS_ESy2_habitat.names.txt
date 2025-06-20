@@ -1,0 +1,24 @@
+S1 Tundra
+S2 Arctic, alpine and subalpine scrub
+S3 Temperate and Mediterranean-montane scrub
+S4 Temperate heathland
+S5 Maquis, arborescent matorral and thermo-Mediterranean scrub
+S6 Garrigue
+S7 Spiny Mediterranean heaths
+S8 Thermo-Atlantic xerophytic scrub
+S9 Riverine and fen scrub
+T1 Broadleaved deciduous forests
+T2 Broadleaved evergreen forests
+T3 Coniferous forests
+R1 Dry grasslands
+R2 Mesic grasslands
+R3 Seasonally wet and wet grasslands
+R4 Alpine and subalpine grasslands 
+R5 Woodland fringes and clearings and tall forb stands
+R6 Inland salt steppes and salt marshes 
+Q1 Raised and blanket bogs
+Q2 Valley mires, poor fens and transition mires
+Q3 Palsa mires
+Q4 Base-rich fens and calcareous spring mires
+Q5 Helophyte beds
+Q6 Periodically exposed shores

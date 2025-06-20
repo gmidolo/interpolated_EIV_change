@@ -266,10 +266,8 @@ res_fin <- res_fin %>%
 
 # load ESy2 names table
 hab.names <-
-  readxl::read_excel('./EUNIS_ESy2_habitat.names.xlsx', col_names = F) %>%
-  setNames('Habitat name') %>%
-  mutate(ESy2 = substr(`Habitat name`, 1, 2)) %>%
-  mutate(`Habitat name` = substr(`Habitat name`, 4, nchar(`Habitat name`)))
+  read_delim('./data/EUNIS_ESy2_habitat.names.txt', col_names = F, show_col_types = F) %>%
+  setNames(c('ESy2', 'Habitat name'))
 
 res_fin <- res_fin %>%
   left_join(hab.names) %>%
