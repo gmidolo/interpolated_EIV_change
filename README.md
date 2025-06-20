@@ -43,14 +43,14 @@ This repository (<https://github.com/gmidolo/interpolated_EIV_change>) includes 
 
 We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,877 vascular plant taxa across 640,751 European vegetation plots. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their spatiotemporal dynamics.
 
-## 1) Source Data: Raw Data Sources (*Not Deposited Here*)
+## Source Data: Raw Data Sources (*Not Deposited Here*)
 
 The primary data sources used in this project are not directly stored in this repository but can be accessed as follows:
 
 -   **Complete (species) vegetation-plot data:** These data are stored within the EVA database repository (<https://doi.org/10.58060/250x-we61>). Access can be requested through the EVA Coordinating Board (see <https://euroveg.org/eva-database/>).
 -   **Ecological Indicator Values for Europe (EIVE 1.0):** These data are publicly available on Zenodo: <https://zenodo.org/records/7534792>.
 
-## 2) Data: Cleaned Data Sources (`data` folder)
+## Data: Cleaned Data Sources (`data` folder)
 
 The `data` folder contains cleaned and processed data files used for the analyses:
 
@@ -58,7 +58,7 @@ The `data` folder contains cleaned and processed data files used for the analyse
 -   [`data/ReSurveyEU_clean.csv.xz`](data/ReSurveyEU_clean.csv.xz): A xz compressed CSV file with selected plots from the ReSurveyEurope dataset.
 -   [`data/EUNIS_ESy2_habitat.names.txt`](data/EUNIS_ESy2_habitat.names.txt): A text file providing full names for the EUNIS-ESy level 2 habitat classification (for more details on EUNIS classification, refer to <https://floraveg.eu/habitat/>).
 
-## 3) R Code: R Scripts (`src` folder)
+## R Code: R Scripts (`src` folder)
 
 The `src` folder contains the R scripts organized by their analytical purpose:
 
