@@ -1,7 +1,3 @@
----
-title: "README.md file for the data repository"
----
-
 # Data and R code for *Sixty years of European plant community change reveal biomass build-up and cross-habitat environmental homogenization*
 
 **Gabriele Midolo** <a href="https://orcid.org/0000-0003-1316-2546" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
@@ -43,7 +39,7 @@ This repository (<https://github.com/gmidolo/interpolated_EIV_change>) includes 
 
 We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,877 vascular plant taxa across 640,751 European vegetation plots. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their spatiotemporal dynamics.
 
-## Source Data: Raw Data Sources (*Not Deposited Here*)
+## 1) Source Data: Raw Data Sources (*Not Deposited Here*)
 
 The primary data sources used in this project are not directly stored in this repository but can be accessed as follows:
 
