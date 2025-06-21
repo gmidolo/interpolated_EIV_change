@@ -39,7 +39,7 @@ This repository (<https://github.com/gmidolo/interpolated_EIV_change>) includes 
 
 We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,877 vascular plant taxa across 640,751 European vegetation plots. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their spatiotemporal dynamics.
 
-## 1) Source Data: Raw Data Sources (*Not Deposited Here*)
+## Source Data: Raw Data Sources (*Not Deposited Here*)
 
 The primary data sources used in this project are not directly stored in this repository but can be accessed as follows:
 
