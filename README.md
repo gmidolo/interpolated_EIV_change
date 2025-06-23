@@ -60,36 +60,36 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 
 ### 1. Random Forests tuning and final model fit
 
--   `1_tuning.R`: Script for tuning and fitting the Random Forest model using all available observations.
--   `1_tuning_EUNIS.lev.2.R`: Script for tuning and fitting the Random Forest model exclusively on plot data with available EUNIS-ESy level 2 habitat classifications.
+- [`1_tuning.R`](src/1_tuning.R): Script for tuning and fitting the Random Forest model using all available observations.
+- [`1_tuning_EUNIS.lev.2.R`](src/1_tuning_EUNIS.lev.2.R): Script for tuning and fitting the Random Forest model exclusively on plot data with available EUNIS-ESy level 2 habitat classifications.
 
 ### 2. Random Forests Cross-Validation
 
--   `2_kfoldcv.R`: Performs 10-fold cross-validation on the training data.
+- [`2_kfoldcv.R`](src/2_kfoldcv.R): Performs 10-fold cross-validation on the training data.
 
 ### 3. Random Forests diagnostics and evaluation
 
--   `3_modeldiagnostic.R`: Generates figures and tables for model evaluation, including tuning results and other statistical summaries.
+- [`3_modeldiagnostic.R`](src/3_modeldiagnostic.R): Generates figures and tables for model evaluation, including tuning results and other statistical summaries.
 
 ### 4. Analyses on actual time series data (ReSurveyEurope)
 
--   `4_lme_resurvey.R`: Executes linear mixed-effects models on the time series data.
--   `4_validation.R`: Validates the interpolation approach using the time series data.
+- [`4_lme_resurvey.R`](src/4_lme_resurvey.R): Executes linear mixed-effects models on the time series data.
+- [`4_validation.R`](src/4_validation.R): Validates the interpolation approach using the time series data.
 
 ### 5. Predict Random Forests (Interpolate ΔCM<sub>EIV</sub>)
 
--   `5_interpolation.R`: Script responsible for interpolating the change in Community Mean Ecological Indicator Values (ΔCM<sub>EIV</sub>).
+- [`5_interpolation.R`](src/5_interpolation.R): Script responsible for interpolating the change in Community Mean Ecological Indicator Values (ΔCM<sub>EIV</sub>).
 
 ### 6. Visualize interpolation results
 
--   `6_average.trends.R`: Generates partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
--   `6_change_EUNIS.lev.2.R`: Estimates the average ΔCM<sub>EIV</sub> across different EUNIS-ESy level 2 habitats.
--   `6_map.geo.R`: Creates geographical maps displaying the average ΔCM<sub>EIV</sub> across Europe.
+- [`6_average.trends.R`](src/6_average.trends.R): Generates partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
+- [`6_change_EUNIS.lev.2.R`](src/6_change_EUNIS.lev.2.R): Estimates the average ΔCM<sub>EIV</sub> across different EUNIS-ESy level 2 habitats.
+- [`6_map.geo.R`](src/6_map.geo.R): Creates geographical maps displaying the average ΔCM<sub>EIV</sub> across Europe.
 
 ### Additional scripts
 
--   `0_anonymize_and_clean.R`: An internal script used to anonymize the `plot_id` column from EVA/ReSurveyEurope data shared in this repository (no need to run this script).
--   `0_helpfunctions.R`: Contains R functions sourced by other analysis scripts.
+- [`0_anonymize_and_clean.R`](src/0_anonymize_and_clean.R): An internal script used to anonymize the `plot_id` column from EVA/ReSurveyEurope data shared in this repository (no need to run this script).
+- [`0_helpfunctions.R`](src/0_helpfunctions.R): Contains R functions sourced by other analysis scripts.
 
 ## License
 
