@@ -100,3 +100,13 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 ## Citation
 
 *This repository is not linked to any publication yet.*
+
+---
+## Contact
+**Gabriele Midolo**  
+Department of Spatial Sciences  
+Faculty of Environmental Sciences  
+Czech University of Life Sciences Prague, Praha-Suchdol, Czech Republic  
+ORCID: [0000-0003-1316-2546](https://orcid.org/0000-0003-1316-2546)  
+Email 1: `gabriele.midolo [at] gmail [dot] com`
+Email 2: `midolo [at] fzp.czu [dot] cz`
