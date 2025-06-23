@@ -44,7 +44,7 @@ We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil m
 The primary data sources used in this project are not directly stored in this repository but can be accessed as follows:
 
 -   **Complete (species) vegetation-plot data:** These data are stored within the EVA database repository (<https://doi.org/10.58060/250x-we61>). Access can be requested through the EVA Coordinating Board (see <https://euroveg.org/eva-database/>).
--   **Ecological Indicator Values for Europe (EIVE 1.0):** These data are publicly available on Zenodo: <https://zenodo.org/records/7534792>.
+-   **Ecological Indicator Values for Europe (EIVE 1.0):** These data are publicly available in Dengler et al. 2023: <https://doi.org/10.3897/VCS.98324.suppl8>.
 
 ## Data: Cleaned Data Sources (`data` folder)
 
