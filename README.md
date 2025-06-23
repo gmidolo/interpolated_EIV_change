@@ -50,8 +50,8 @@ The primary data sources used in this project are not directly stored in this re
 
 The `data` folder contains cleaned and processed data files used for the analyses:
 
--   [`data/EVA.csv.xz`](data/EVA.csv.xz): A xz compressed CSV file containing selected vegetation plots from the EVA database.
--   [`data/ReSurveyEU_clean.csv.xz`](data/ReSurveyEU_clean.csv.xz): A xz compressed CSV file with selected plots from the ReSurveyEurope dataset.
+-   [`data/EVA.csv.xz`](data/EVA.csv.xz): A xz compressed CSV file containing selected vegetation plots from the EVA database. Data is described in [`data/legend.EVA.data.txt`](data/legend.EVA.data.txt).
+-   [`data/ReSurveyEU_clean.csv.xz`](data/ReSurveyEU_clean.csv.xz): A xz compressed CSV file with selected plots from the ReSurveyEurope dataset. Data is described in [`data/legend.ReSurveyEU.data.txt`](data/legend.ReSurveyEU.data.txt).
 -   [`data/EUNIS_ESy2_habitat.names.txt`](data/EUNIS_ESy2_habitat.names.txt): A text file providing full names for the EUNIS-ESy level 2 habitat classification (for more details on EUNIS classification, refer to <https://floraveg.eu/habitat/>).
 
 ## R Code: R Scripts (`src` folder)
