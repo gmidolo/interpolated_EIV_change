@@ -245,7 +245,7 @@ for (ind.name in ind.names$eiv_name_raw) {
     theme(legend.position = 'none')
 }
 
-ggsave(filename=paste0(pth2preds, 'rtm.trends.raw.svg'),
+ggsave(filename=paste0(pth2preds, 'homo.trends.raw.svg'),
        cowplot::plot_grid(homo_plts$EIV_L,
                           homo_plts$EIV_T,
                           homo_plts$EIV_M,
@@ -253,7 +253,7 @@ ggsave(filename=paste0(pth2preds, 'rtm.trends.raw.svg'),
                           homo_plts$EIV_R,
                           ncol = 2),
        height = 8, width = 6)
-ggsave(filename=paste0(pth2preds, 'rtm.trends.raw.pdf'),
+ggsave(filename=paste0(pth2preds, 'homo.trends.raw.pdf'),
        cowplot::plot_grid(homo_plts$EIV_L,
                           homo_plts$EIV_T,
                           homo_plts$EIV_M,
