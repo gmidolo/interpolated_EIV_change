@@ -17,6 +17,8 @@ suppressPackageStartupMessages({
   library(flextable)
   library(scales)
   library(matrixStats)
+  library(cowplot)
+  library(ggpubr)
 })
 
 # standardize plot size to median by habitat?
@@ -164,8 +166,8 @@ for(ind.name in ind.names$eiv_name_raw) {
   
   # predict changes
   pred_focalchange <- pred_dat %>%
-    mutate(eiv_abs.change = eiv_pred_max_yr - eiv_pred_min_yr) %>%
-    select(-contains('_pred_'))
+    mutate(eiv_abs.change = eiv_pred_max_yr - eiv_pred_min_yr) #%>%
+    #select(-contains('_pred_'))
   
   # percentages of plots with CMEIV change <= -0.1 and >= 0.1
   ab01[[ind.name]] <- pred_focalchange %>%
@@ -194,6 +196,7 @@ for(ind.name in ind.names$eiv_name_raw) {
   res.i <- pred_focalchange %>%
     group_by(ESy2) %>%
     summarise(
+      mean.min = mean(eiv_pred_min_yr),
       mean = mean(eiv_abs.change),
       sd = sd(eiv_abs.change),
       n = n()
@@ -203,7 +206,7 @@ for(ind.name in ind.names$eiv_name_raw) {
     mutate(lci = mean - (1.96 * se),
            uci = mean + (1.96 * se))
   res.i$significance <- CI_overlap_test(res.i$lci, res.i$uci)
-  
+
   # finalize table
   res.i <- res.i %>%
     mutate_if(is.numeric, round, 2) %>%
@@ -213,24 +216,53 @@ for(ind.name in ind.names$eiv_name_raw) {
   # store results in the list
   res[[ind.name]] <- res.i
   
+  print(Sys.time()-st)
 }
 
-#### 3. Format final table and export ####
-getESy1 <- \(ESy2.code) {
-  str = substr(ESy2.code, 1, 1)
-  if (str == 'T') {
-    return('Forest')
-  }
-  if (str == 'R') {
-    return('Grassland')
-  }
-  if (str == 'S') {
-    return('Scrub')
-  }
-  if (str == 'Q') {
-    return('Wetland')
-  }
+#### 3. Check homogenisation trends ####
+
+homo_plts <- list()
+for (ind.name in ind.names$eiv_name_raw) {
+  homo_plts[[ind.name]] <- res[[ind.name]] %>%
+    mutate(habitat=unname(sapply(.$ESy2, getESy1)), .before = ESy2) %>%
+    ggplot(aes(mean.min, mean)) +
+    geom_hline(yintercept = 0, lty=2) +
+    geom_smooth(method = 'lm', color='black') +
+    stat_cor(aes(label = paste( ..p.label.., sep = "~`,`~")),
+             label.x = quantile(range(res[[ind.name]]$mean.min), .6),
+             label.y = quantile(range(res[[ind.name]]$mean), .9),
+             r.accuracy=0.01, p.accuracy = 0.001) +
+    stat_cor(aes(label = paste(..rr.label.., sep = "~`,`~")),
+             label.x = quantile(range(res[[ind.name]]$mean.min), .6),
+             label.y = quantile(range(res[[ind.name]]$mean), 1),
+             r.accuracy=0.01, p.accuracy = 0.001) +
+    geom_label(aes(label=ESy2, fill=habitat), size=2.5, alpha=.5, label.size=NA) +
+    theme_bw() +
+    labs(
+      x = bquote(CM[EIV]~.(ind.names$eiv_name[ind.names$eiv_name_raw %in% ind.name])~" - baseline"),
+      y = bquote(symbol('D')*CM[EIV]~.(ind.names$eiv_name[ind.names$eiv_name_raw %in% ind.name]))
+    ) +
+    theme(legend.position = 'none')
 }
+
+ggsave(filename=paste0(pth2preds, 'rtm.trends.raw.svg'),
+       cowplot::plot_grid(homo_plts$EIV_L,
+                          homo_plts$EIV_T,
+                          homo_plts$EIV_M,
+                          homo_plts$EIV_N,
+                          homo_plts$EIV_R,
+                          ncol = 2),
+       height = 8, width = 6)
+ggsave(filename=paste0(pth2preds, 'rtm.trends.raw.pdf'),
+       cowplot::plot_grid(homo_plts$EIV_L,
+                          homo_plts$EIV_T,
+                          homo_plts$EIV_M,
+                          homo_plts$EIV_N,
+                          homo_plts$EIV_R,
+                          ncol = 2),
+       height = 8, width = 6)
+
+#### 4. Format final table and export ####
 
 res_spread <- res %>%
   map(\(x) {

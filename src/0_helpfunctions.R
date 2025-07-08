@@ -561,3 +561,20 @@ plot.inc.cor <- function(mat,
                 color = 'grey80')
   return(p)
 }
+
+# Convert ESy2 code to habitat type ####
+getESy1 <- \(ESy2.code) {
+  str = substr(ESy2.code, 1, 1)
+  if (str == 'T') {
+    return('Forest')
+  }
+  if (str == 'R') {
+    return('Grassland')
+  }
+  if (str == 'S') {
+    return('Scrub')
+  }
+  if (str == 'Q') {
+    return('Wetland')
+  }
+}
