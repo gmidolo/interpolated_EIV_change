@@ -50,9 +50,42 @@ The primary data sources used in this project are not directly stored in this re
 
 The `data` folder contains cleaned and processed data files used for the analyses:
 
--   [`data/EVA.csv.xz`](data/EVA.csv.xz): A xz compressed CSV file containing selected vegetation plots from the EVA database. Data is described in [`data/legend.EVA.data.txt`](data/legend.EVA.data.txt).
--   [`data/ReSurveyEU_clean.csv.xz`](data/ReSurveyEU_clean.csv.xz): A xz compressed CSV file with selected plots from the ReSurveyEurope dataset. Data is described in [`data/legend.ReSurveyEU.data.txt`](data/legend.ReSurveyEU.data.txt).
 -   [`data/EUNIS_ESy2_habitat.names.txt`](data/EUNIS_ESy2_habitat.names.txt): A text file providing full names for the EUNIS-ESy level 2 habitat classification (for more details on EUNIS classification, refer to <https://floraveg.eu/habitat/>).
+-   [`data/EVA.csv.xz`](data/EVA.csv.xz): A xz compressed CSV file containing selected vegetation plots from the EVA database. 
+-   [`data/ReSurveyEU_clean.csv.xz`](data/ReSurveyEU_clean.csv.xz): A xz compressed CSV file with selected plots from the ReSurveyEurope dataset.
+
+EVA and ReSurveyEU .csv files contains the following elements, depending on the file:
+
+| Column Name | Description |
+| :---------- | :----------------------------------------------------------------- |
+| `database` | database (= either `EVA` or `ReSurveyEU`) |
+| `resurv_id` | resurvey plot id |
+| `plot_id` | anonymized observation id |
+| `ReSur_type` | type of resurvey (= `Permanent` or `Resampling`) |
+| `dataset` | anonymized dataset name |
+| `ESy` | Level 3 EUNIS habitat code |
+| `habitat` | Level 1 EUNIS habitat (= `Forest` or `Grassland` or `Scrub` or `Wetland`) |
+| `lon` | longitude in WGS84 |
+| `lat` | latitude in WGS84 |
+| `x` | longitude in EPSG:25832 |
+| `y` | latitude in EPSG:25832 |
+| `elev` | elevation a.s.l. in m |
+| `year` | year of sampling |
+| `plot_size` | plot size in squared m |
+| `n` | number of species (species richness) |
+| `x_mean` | average longitude in EPSG:25832 resurvey observations belonging to the same plot (resurv_id) |
+| `y_mean` | average latitude in EPSG:25832 resurvey observations belonging to the same plot (resurv_id) |
+| `max_dist_m` | maximum distance (m) between resurvey observations belonging to the same plot (resurv_id) |
+| `n.EIV_M` | proportion of species with available EIV for moisture |
+| `n.EIV_N` | proportion of species with available EIV for nitrogen |
+| `n.EIV_R` | proportion of species with available EIV for reaction |
+| `n.EIV_L` | proportion of species with available EIV for light |
+| `n.EIV_T` | proportion of species with available EIV for temperature |
+| `cm.EIV_M` | community mean EIV for moisture |
+| `cm.EIV_N` | community mean EIV for nitrogen |
+| `cm.EIV_R` | community mean EIV for reaction |
+| `cm.EIV_L` | community mean EIV for light |
+| `cm.EIV_T` | community mean EIV for temperature |
 
 ## R Code: R Scripts (`src` folder)
 
@@ -78,11 +111,12 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 
 ### 5. Predict Random Forests (Interpolate ΔCM<sub>EIV</sub>)
 
-- [`5_interpolation.R`](src/5_interpolation.R): Script responsible for interpolating the change in Community Mean Ecological Indicator Values (ΔCM<sub>EIV</sub>).
+- [`5_interpolation.R`](src/5_interpolation.R): Interpolates changes in community-mean ecological indicator values (ΔCM<sub>EIV</sub>). Uses prediction ensemble (mean) across all trees in the random forests.
+- [`5_raw_interpolation.R`](src/5_raw_interpolation.R): Interpolates average ΔCM<sub>EIV</sub>s across all trees in the random forests and store summary stats for predictions across all plots for each year (1960-2020) and habitat type.
 
 ### 6. Visualize interpolation results
 
-- [`6_average.trends.R`](src/6_average.trends.R): Generates partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
+- [`6_plot_trends.R`](src/6_average.trends.R): Generates histograms and partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
 - [`6_change_EUNIS.lev.2.R`](src/6_change_EUNIS.lev.2.R): Estimates the average ΔCM<sub>EIV</sub> across different EUNIS-ESy level 2 habitats.
 - [`6_map.geo.R`](src/6_map.geo.R): Creates geographical maps displaying the average ΔCM<sub>EIV</sub> across Europe.
 
