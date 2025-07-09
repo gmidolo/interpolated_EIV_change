@@ -60,7 +60,7 @@ EVA and ReSurveyEU .csv files contains the following elements, depending on the 
 | :---------- | :----------------------------------------------------------------- |
 | `database` | database (= either `EVA` or `ReSurveyEU`) |
 | `resurv_id` | resurvey plot id |
-| `plot_id` | anonymized observation id |
+| `plot_id` | anonymized observation id *|
 | `ReSur_type` | type of resurvey (= `Permanent` or `Resampling`) |
 | `dataset` | anonymized dataset name |
 | `ESy` | Level 3 EUNIS habitat code |
@@ -86,6 +86,8 @@ EVA and ReSurveyEU .csv files contains the following elements, depending on the 
 | `cm.EIV_R` | community mean EIV for reaction |
 | `cm.EIV_L` | community mean EIV for light |
 | `cm.EIV_T` | community mean EIV for temperature |
+
+* = N.B. plot_id in the shared data is not the same as the one stored in models outputs in the `models` and `preds` folder! The former was generated to anonymize original data in EVA and ReSurvey Europe, but results from models and predictions stores the original values.
 
 ## R Code: R Scripts (`src` folder)
 
