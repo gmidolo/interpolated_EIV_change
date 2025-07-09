@@ -116,7 +116,7 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 
 ### 6. Visualize interpolation results
 
-- [`6_plot_trends.R`](src/6_average.trends.R): Generates histograms and partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
+- [`6_plot_trends.R`](src/6_plot_trends.R): Generates histograms and partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
 - [`6_change_EUNIS.lev.2.R`](src/6_change_EUNIS.lev.2.R): Estimates the average ΔCM<sub>EIV</sub> across different EUNIS-ESy level 2 habitats.
 - [`6_map.geo.R`](src/6_map.geo.R): Creates geographical maps displaying the average ΔCM<sub>EIV</sub> across Europe.
 
