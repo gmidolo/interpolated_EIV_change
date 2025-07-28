@@ -35,7 +35,7 @@ Denys Vynokurov <a href="https://orcid.org/0000-0001-7003-6680" target="_blank">
 Petr Keil <a href="https://orcid.org/0000-0003-3017-1858" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>
 
 ---
-This repository (<https://github.com/gmidolo/interpolated_EIV_change>) includes the **data** and **R code** used in our study. It allows for the reproduction of the main analyses and supplementary materials. Due to their substantial file size, model outputs are not included in this repository.
+This repository (<https://github.com/gmidolo/interpolated_EIV_change>) includes the **data** and **R code** used in our study. It allows for the reproduction of the main analyses and supplementary materials. Due to their substantial file size, model outputs and predictions are not included in this repository but are currently available on Figshare (<https://figshare.com/s/c245b8ee96da31fa2725>).
 
 We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,877 vascular plant taxa across 640,751 European vegetation plots. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their spatiotemporal dynamics.
 
