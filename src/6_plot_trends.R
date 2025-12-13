@@ -78,7 +78,7 @@ dat_alltrees <- ind.names$eiv_name_raw %>%
       select(contains('eiv_name'), everything())
   }) %>%
   setNames(ind.names$eiv_name_raw)
-  
+
 # calculate slope across studied period
 slope_trend <- dat_alltrees %>%
   map(\(x){
@@ -107,7 +107,7 @@ pals = hcl.colors(length(vals), palette = 'RdYlBu', rev=T)
 # generate various baseline EIV or average EIV per year 
 dat_cntrd <- dat_alltrees %>%
   map(\(x){
-
+    
     dat_baseline <- x %>% filter(year==1960) 
     names(dat_baseline)[5:length(dat_baseline)] <- paste0(names(dat_baseline)[5:length(dat_baseline)],'_1960')
     
@@ -155,36 +155,36 @@ hab <- c('Forest','Grassland','Scrub','Wetland')
 for(i in names(dat_cntrd)) {
   
   for (h in hab) {
-  
-  # define background color based on the slope estimate
-  slope_hi <- slope_trend %>% 
-    filter(habitat==h & eiv_name_raw == i) %>% 
-    pull(slope_decades)
-  bg_col <- pals[which(vals %in% round(slope_hi, 2))]
-  
-  # get plot count to display
-  nplots <- plots_count %>%
-    filter(habitat==h & eiv_name_raw == i) %>%
-    prettyNum(big.mark=",",scientific=FALSE)
-
-  # define y axis lables 
-  y_left <- y_breaks[1:floor(length(y_breaks)/2)]
-  y_right <- y_breaks[(ceiling(length(y_breaks)/2)+1):length(y_breaks)]
-  y_right <- paste0('+', y_right)
-  y_mid <- dat_cntrd[[i]] %>% 
-            filter(habitat==h) %>% 
-            pull(mean_1960) %>% 
-            unique() %>% 
-            round(1)
-  y_labels <- c(y_left, y_mid, y_right)
-
-  # get pretty EIV variable name
-  pretty_EIV_name <- ind.names[which(ind.names$eiv_name_raw==i),]$eiv_name
-  
-  # plot relative changes over 1960 as baseline
-  p_means.1960[[h]][[pretty_EIV_name]] <-
-    dat_cntrd[[i]] %>%
-    filter(habitat==h) %>%
+    
+    # define background color based on the slope estimate
+    slope_hi <- slope_trend %>% 
+      filter(habitat==h & eiv_name_raw == i) %>% 
+      pull(slope_decades)
+    bg_col <- pals[which(vals %in% round(slope_hi, 2))]
+    
+    # get plot count to display
+    nplots <- plots_count %>%
+      filter(habitat==h & eiv_name_raw == i) %>%
+      prettyNum(big.mark=",",scientific=FALSE)
+    
+    # define y axis lables 
+    y_left <- y_breaks[1:floor(length(y_breaks)/2)]
+    y_right <- y_breaks[(ceiling(length(y_breaks)/2)+1):length(y_breaks)]
+    y_right <- paste0('+', y_right)
+    y_mid <- dat_cntrd[[i]] %>% 
+      filter(habitat==h) %>% 
+      pull(mean_1960) %>% 
+      unique() %>% 
+      round(1)
+    y_labels <- c(y_left, y_mid, y_right)
+    
+    # get pretty EIV variable name
+    pretty_EIV_name <- ind.names[which(ind.names$eiv_name_raw==i),]$eiv_name
+    
+    # plot relative changes over 1960 as baseline
+    p_means.1960[[h]][[pretty_EIV_name]] <-
+      dat_cntrd[[i]] %>%
+      filter(habitat==h) %>%
       ggplot(aes(year, m)) +
       # color background
       annotate('rect', xmin=1960, xmax=2020, ymin=-Inf, ymax=Inf, alpha=.8, fill=bg_col) +
@@ -204,10 +204,10 @@ for(i in names(dat_cntrd)) {
         limits = y_limits_centrd,
         labels = y_labels,
         breaks = y_breaks
-    ) +
-    #annotate no. plots
-    annotate('text', x = 1990, y = Inf, label = paste0('n = ', nplots['n']), vjust = 1.5, size= 2.75)
- }
+      ) +
+      #annotate no. plots
+      annotate('text', x = 1990, y = Inf, label = paste0('n = ', nplots['n']), vjust = 1.5, size= 2.75)
+  }
 }
 
 # 3. Plot histogram-like column bars####
@@ -225,24 +225,24 @@ colpa <- data.frame(cols=hcl.colors(length(lb), palette = 'RdYlBu', rev=T), mean
 dat_cat <- dat %>% 
   map(\(x){
     x %>%
-     mutate(mean_cat = cut(
-     eiv_abs.change_1960.2020, breaks = br, labels = lb)) %>% 
-     group_by(mean_cat) %>%
-     summarise(n = n())
+      mutate(mean_cat = cut(
+        eiv_abs.change_1960.2020, breaks = br, labels = lb)) %>% 
+      group_by(mean_cat) %>%
+      summarise(n = n())
   }) 
 
 dat_mean.cat <- dat %>% 
   map(\(x){
-   y=as.character(round(mean(x$eiv_abs.change_1960.2020), 2))
-   if(substr(y, start = 1, stop = 1)!='-'){
-     y=paste0('+',y)
-   }
-   return(y)
+    y=as.character(round(mean(x$eiv_abs.change_1960.2020), 2))
+    if(substr(y, start = 1, stop = 1)!='-'){
+      y=paste0('+',y)
+    }
+    return(y)
   }) 
 
 dat_mean.val <- dat %>% 
   map(\(x){
-   round(mean(x$eiv_abs.change_1960.2020), 4)
+    round(mean(x$eiv_abs.change_1960.2020), 4)
   }) 
 
 # plot the histograms
@@ -255,21 +255,21 @@ for(i in names(dat)) {
   max_count <- di %>% filter(n == max(n)) %>% pull(n)  
   txt_y_pos <- max_count-max_count*0.05
   p.hists[[pretty_EIV_name]] <- di %>%
-      ggplot(aes(x = count, y = n, fill =  mean_cat)) +
-      geom_col(col=NA, position = 'dodge', width=1) +
-      geom_vline(xintercept = mean(di$count), lty=2, col='grey50') +
-      geom_vline(xintercept = norm.mean, lty=1) +
-      annotate('text', x = 6, y = txt_y_pos, label=dat_mean.cat[[i]]) +
-      scale_fill_manual(values=colpa$cols) +
-      theme_bw() +
-      ggtitle(pretty_EIV_name)+
-      scale_y_continuous(labels = scales::unit_format(unit = '', scale = 1e-3))+
-      theme(legend.position = 'none', 
-            panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
-            axis.title = element_blank(),
-            panel.border = element_blank(), 
-            axis.line.y = element_line(colour = 'black'),
-            axis.text.x = element_blank(), axis.ticks.x = element_blank())
+    ggplot(aes(x = count, y = n, fill =  mean_cat)) +
+    geom_col(col=NA, position = 'dodge', width=1) +
+    geom_vline(xintercept = mean(di$count), lty=2, col='grey50') +
+    geom_vline(xintercept = norm.mean, lty=1) +
+    annotate('text', x = 6, y = txt_y_pos, label=dat_mean.cat[[i]]) +
+    scale_fill_manual(values=colpa$cols) +
+    theme_bw() +
+    ggtitle(pretty_EIV_name)+
+    scale_y_continuous(labels = scales::unit_format(unit = '', scale = 1e-3))+
+    theme(legend.position = 'none', 
+          panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+          axis.title = element_blank(),
+          panel.border = element_blank(), 
+          axis.line.y = element_line(colour = 'black'),
+          axis.text.x = element_blank(), axis.ticks.x = element_blank())
 }
 
 # combine plots into a grid
