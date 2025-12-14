@@ -8,7 +8,6 @@
 
 ################################################################################
 
-
 #### 1. Prepare data ####
 
 # load packages
@@ -75,28 +74,8 @@ dat <- dat %>%
  }) %>%
  bind_rows() 
 
-# get EU-countires sf shapes
-regions_name <- c('Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria',
-                  'Corsica', 'Crete', 'Croatia', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany',
-                  'Greece', 'Hungary', 'Ireland', 'Italy', 'Kosovo', 'Latvia', 'Liechtenstein',
-                  'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Montenegro', 'Netherlands', 'North Macedonia',
-                  'Norway', 'Poland', 'Portugal', 'Romania', 'Sardinia', 'Serbia', 'Sicily',
-                  'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Ukraine', 'United Kingdom')
-bbox_coords <- c(xmin = -1123055, ymin = 3923814, xmax = 2796649, ymax = 8007282)
-EU <- ne_countries(scale = 'large', returnclass = 'sf') %>%
-  filter(name %in% regions_name) %>%
-  st_transform(crs = 25832) %>%
-  st_crop(bbox_coords) %>% 
-  select(geometry)
-
-# set theme for plotting
-my_theme <- theme(
-  #panel.background = element_rect(fill = 'white',color='grey70'),
-  #panel.grid = element_line(color = 'grey90'),
-  #strip.background = element_rect(fill='white', color='black'),
-  strip.text = element_text(colour ='black'),
-  axis.title=element_blank()
-)
+# load European countries sf
+EU <- read_rds('./data/EU_shape_map.rds')
 
 #### 2. Rasterize average change per habitat ####
 
@@ -111,7 +90,7 @@ var2collect <- data.frame(var = 'eiv_abs.change_1960.2020',
                           min_yr = 1960,
                           max_yr = 2020)
 
-# Funtions used to aggregate metrics of change
+# functions used to aggregate metrics of change
 mean_at_least_five_plots <- \(x, th = 5) {
   ifelse(length(x) >= th, mean(x), NA)
 } # average if there are at least 5 plots
@@ -119,6 +98,7 @@ count_at_least_five_plots <- \(x, th = 5) {
   ifelse(length(x) >= th, length(x), NA)
 } # average if there are at least 5 plots
 
+# get rasters of EIV changes
 dat_i_h <- list()
 conta_tot = list()
 conta_rast = list()
@@ -182,7 +162,9 @@ cols <-
   hcl.colors(length(levels(d2plot_refined[1, 'mean_cat'])), 'RdYlBu', rev = T)
 
 # simplify EU shape
-newEU <- EU %>% st_buffer(1000) %>% st_simplify(dTolerance = 4000)
+newEU <- EU %>% 
+  st_buffer(1000) %>% 
+  st_simplify(dTolerance = 4000)
 
 # convert EIV names to factor
 d2plot_refined$EIV <- factor(d2plot_refined$EIV, ind.names$eiv_name)
@@ -194,16 +176,23 @@ p <- ggplot() +
   facet_grid(EIV ~ Habitat) +
   scale_fill_manual(values = cols) +
   geom_sf(data=newEU, fill=NA, color='grey40', linewidth=.1) +
-  labs(fill='Community mean EIV change\n(2020 vs. 1960)')+
+  labs(fill = expression(
+    atop(
+      paste(Delta, " CM"[EIV]), 
+      paste("(=", "CM"[EIV][2020], " - ", "CM"[EIV][1960], ")")
+    )
+  )) +  
   theme(strip.text = element_text(colour ='black', face = 2, size=10),
         axis.title=element_blank(),
         legend.title = element_text(face='bold', size=10),
-        legend.position = 'bottom'
+        legend.position = 'bottom',
+        strip.background = element_rect(fill = 'white', colour = 'black', linewidth = 0.5)
   ) +
   guides(fill = guide_legend(reverse=TRUE))
 
 # export
-ggsave(paste0(pth2fig, 'EIVchangemap.svg'), p, width = 6, height = 8)
+ggsave(paste0(pth2fig, 'EIVchangemap.png'), p, width = 6, height = 8, dpi = 600)
+# ggsave(paste0(pth2fig, 'EIVchangemap.svg'), p, width = 6, height = 8)
 
 # quit
 quit(save = 'no')

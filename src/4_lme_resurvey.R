@@ -155,10 +155,10 @@ p <- ggplot(res.dat, aes(
   col=eiv_name)
   ) + 
   geom_hline(yintercept = 0, lty=2, color='grey') +
-  geom_pointrange(aes(ymin=asymp.LCL, ymax=asymp.UCL), fatten = 3) +
+  geom_pointrange(aes(ymin=asymp.LCL, ymax=asymp.UCL), fatten = 4) +
   facet_wrap(~habitat) +
   coord_flip() +
-  labs(y=expression(paste(Delta, ' CM', ''[EIV], ' per decade')), x='') +
+  labs(y = expression(paste(Delta, ' CM', ''[EIV], ' per decade')), x='') +
   theme_bw() +
   theme(
     axis.title.y = element_blank(),
@@ -168,7 +168,8 @@ p <- ggplot(res.dat, aes(
     strip.text.x = element_text(hjust = 0, margin=margin(l=0), size=15, face=2),
     strip.background = element_blank()
   ) +
-  scale_color_manual(values=RColorBrewer::brewer.pal(5,'Dark2'))
+  scale_color_manual(values=RColorBrewer::brewer.pal(5,'Dark2')) +
+  scale_y_continuous(breaks = c(-0.04, -0.02, 0, 0.02, 0.04, 0.06))
 
 p
 
@@ -179,7 +180,7 @@ pth2fig <- './fig/'
 ggsave('ReSurv.LME.change.svg', 
        p, 
        path = pth2fig,
-       width = 7, height = 7)
+       width = 8, height = 6)
 
 ## Plot re-survey location (mini-maps) ##
 regions_name <- c('Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria',
