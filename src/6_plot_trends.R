@@ -191,7 +191,7 @@ for(i in names(dat_cntrd)) {
       # plot preidction interval
       geom_ribbon(aes(ymin=lpi, ymax=upi), fill='grey80', alpha=.7) +
       # plot CI to the mean
-      geom_ribbon(aes(ymin=lci, ymax=uci), fill='grey20', alpha=.7) +
+      geom_ribbon(aes(ymin=lci, ymax=uci), fill='black', alpha=.7) +
       # plot zero change line
       geom_segment(x = 1960, y = 0, xend = 2020, yend = 0, lty=3, color='grey30', linewidth=.3) +
       # details
