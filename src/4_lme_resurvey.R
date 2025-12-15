@@ -43,10 +43,18 @@ hab.change.serie <- d.initial %>%
   summarise(hab_change = n() > 1)
 table(hab.change.serie$hab_change)
 
-# exclude plots (entire time series) with habitat change?
+# apply further filters
 d.initial <- d.initial %>%
-  anti_join(hab.change.serie %>%
-              filter(hab_change), 'resurv_id')
+  # exclude plots (entire time series) with habitat change
+  anti_join(hab.change.serie %>% filter(hab_change), 'resurv_id') %>%
+  group_by(resurv_id) %>%
+  # filter resurvey plot with at least two plots
+  filter(n_distinct(plot_id) >= 2) %>%
+  # filter resurvey that did not change habitat (EUNIS-ESy lev. 1) between any of the resurvey
+  filter(n_distinct(habitat) == 1) %>%
+  # make sure plots form the same resurvey id do not belong to different datasets?
+  filter(n_distinct(dataset) == 1) %>%
+  ungroup()
 
 # set ind names to analyze
 ind.names <- c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')
@@ -116,6 +124,13 @@ for (ind.name in ind.names) {
   # select used data
   d <- d %>%
     select(dataset_id, resurv_id, eiv, habitat, time, plot_size_log)
+  
+  # number of resurvey plots per habitat
+  d.plot.count <- d %>%
+    select(resurv_id,habitat) %>%
+    unique () %>%
+    group_by(habitat) %>%
+    summarise(no.plots = n())
   
   # fit the LME model
   lme_model <- lmer(eiv ~ habitat * time + plot_size_log + (1 |dataset_id / resurv_id),
@@ -205,6 +220,11 @@ grd_size_km = 75 # grid size
 for (i in c('Forest', 'Grassland', 'Scrub', 'Wetland')) {
   # plot occupancy for each habitat
   dip <- d.initial %>%
+    group_by(resurv_id) %>%
+    filter(n_distinct(plot_id) >= 2) %>%
+    filter(n_distinct(habitat) == 1) %>%
+    filter(n_distinct(dataset) == 1) %>%
+    ungroup() %>%
     filter(habitat == i) %>%
     select(resurv_id, x_mean, y_mean) %>%
     unique()

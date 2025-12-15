@@ -186,13 +186,13 @@ p <- ggplot() +
         axis.title=element_blank(),
         legend.title = element_text(face='bold', size=10),
         legend.position = 'bottom',
-        strip.background = element_rect(fill = 'white', colour = 'black', linewidth = 0.5)
+        strip.background = element_rect(fill = 'grey90', colour = 'grey70', linewidth = 0.5)
   ) +
   guides(fill = guide_legend(reverse=TRUE))
 
 # export
 ggsave(paste0(pth2fig, 'EIVchangemap.png'), p, width = 6, height = 8, dpi = 600)
-# ggsave(paste0(pth2fig, 'EIVchangemap.svg'), p, width = 6, height = 8)
+# ggsave(paste0(pth2fig, 'EIVchangemap.pdf'), p, width = 6, height = 8)
 
 # quit
 quit(save = 'no')
