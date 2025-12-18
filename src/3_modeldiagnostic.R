@@ -409,6 +409,8 @@ ggsave(
 )
 
 #### 8. Correlations across predictions of change####
+# N.B. this part requires having collected predictions (using `./src/interpolation.R`)
+set.seed(123)
 dat.initial <-
   bind_rows(
     read_csv('./data/EVA.csv.xz', show_col_types = F), # Load EVA data
