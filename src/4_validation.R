@@ -1,7 +1,7 @@
 ################################################################################
 # Author: Gabriele Midolo
 # Email: midolo@fzp.czu.cz
-# Date: 26.05.2025
+# Date: 21.12.2025
 ################################################################################
 
 # Description: Model validation using time series (ReSurveyEurope) data
@@ -18,6 +18,7 @@ suppressPackageStartupMessages(
   {
     library(tidyverse)
     library(tidymodels)
+    library(flextable)
   }
 )
 
@@ -71,7 +72,7 @@ for(ind.name in ind.names){
   
 }
 
-# get the stats of the validation results
+# summarize stats of the validation procedure (results in Table S2)
 res <- list()
 for(ind.name in ind.names){
   res.mean <- paste0(pth2valid, ind.name,'.ReSu.only.rep_test_validation.csv') %>%
@@ -99,8 +100,8 @@ res <- res %>%
 
 # export results in a table
 res %>%
-  flextable::flextable() %>% 
-  flextable::save_as_docx( path = "./code/data/validation/ReSu.only.rep_test_validation.docx")
+  flextable() %>% 
+  save_as_docx( path = './validation/ReSu.only.rep_test_validation.docx')
 
 # quit
 quit(save = 'no')

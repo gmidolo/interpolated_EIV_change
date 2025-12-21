@@ -88,8 +88,6 @@ d.initial$year %>% range
 res <- list()
 for (ind.name in ind.names) {
   
-  #sti = Sys.time()
-  
   # copy initial dataset
   d = d.initial
   
@@ -144,7 +142,6 @@ for (ind.name in ind.names) {
   
   res[[ind.name]] <- habitat_yearslopes
   
-  #print(Sys.time() - sti)
 }
 
 #### 3. Plot LME coefficients ####
@@ -185,8 +182,7 @@ p <- ggplot(res.dat, aes(
   ) +
   scale_color_manual(values=RColorBrewer::brewer.pal(5,'Dark2')) +
   scale_y_continuous(breaks = c(-0.04, -0.02, 0, 0.02, 0.04, 0.06))
-
-p
+print(p)
 
 # folder where to store figures 
 pth2fig <- './fig/'
@@ -198,23 +194,12 @@ ggsave('ReSurv.LME.change.svg',
        width = 8, height = 6)
 
 ## Plot re-survey location (mini-maps) ##
-regions_name <- c('Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria',
-                  'Corsica', 'Crete', 'Croatia', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany',
-                  'Greece', 'Hungary', 'Ireland', 'Italy', 'Kosovo', 'Latvia', 'Liechtenstein',
-                  'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Montenegro', 'Netherlands', 'North Macedonia',
-                  'Norway', 'Poland', 'Portugal', 'Romania', 'Sardinia', 'Serbia', 'Sicily',
-                  'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Ukraine', 'United Kingdom')
-bbox_coords <- c(
-  xmin = -1123055,
-  ymin = 3923814,
-  xmax = 2796649,
-  ymax = 8007282
-)
-EU <- ne_countries(scale = 'large', returnclass = 'sf') %>%
-  filter(name %in% regions_name) %>%
-  st_transform(crs = 25832) %>%
-  st_crop(bbox_coords) %>%
-  select(geometry)
+
+# get EU-countires sf shapes
+EU <- read_rds('./data/EU_shape_map.rds') %>% 
+  st_buffer(2000) %>% 
+  st_simplify(dTolerance = 4000) %>%
+  st_union()
 
 grd_size_km = 75 # grid size
 for (i in c('Forest', 'Grassland', 'Scrub', 'Wetland')) {

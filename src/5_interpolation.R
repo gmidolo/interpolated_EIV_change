@@ -48,8 +48,7 @@ if (standardize_plot.size) {
               n_in_db = n()) %>%
     ungroup() %>%
     group_by(habitat) %>%
-    summarise(plot_size_median = weightedMedian(x = plot_size_median_in_db, w =
-                                                  n_in_db))
+    summarise(plot_size_median = weightedMedian(x = plot_size_median_in_db, w = n_in_db))
 }
 glimpse(hab_plot.size)
 

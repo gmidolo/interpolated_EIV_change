@@ -15,7 +15,6 @@ suppressPackageStartupMessages({
   library(tidyverse)
   library(sf)
   library(terra)
-  library(rnaturalearth)
 })
 
 # set indicator names
@@ -81,9 +80,7 @@ EU <- read_rds('./data/EU_shape_map.rds')
 
 # set base raster
 res_km <- 50
-r <- rast(res = res_km * 1000,
-          extent = ext(EU),
-          crs = crs(EU))
+r <- rast(res = res_km * 1000, extent = ext(EU), crs = crs(EU))
 
 # variables to work with, assign time range
 var2collect <- data.frame(var = 'eiv_abs.change_1960.2020',

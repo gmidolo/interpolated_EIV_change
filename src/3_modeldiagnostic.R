@@ -32,9 +32,7 @@ suppressPackageStartupMessages({
   library(vip)
   library(sf)
   library(terra)
-  library(rnaturalearth)
 })
-
 
 # prepare data for modeling and split train and test dataset
 set.seed(123)
@@ -50,11 +48,7 @@ dat_split <-
 # import last fit models
 m <- ind.names$eiv_name_raw %>%
   map(\(ind.name) {
-    list.files(
-      './models',
-      pattern = paste0('RF.last_fit_', ind.name),
-      full.names = T
-    ) %>%
+    paste0(pth2export, 'RF.last_fit_', ind.name, '.rds') %>%
       read_rds()
   }) %>%
   setNames(ind.names$eiv_name_raw)
@@ -62,23 +56,15 @@ m <- ind.names$eiv_name_raw %>%
 # import CV results
 cv_res <- ind.names$eiv_name_raw %>%
   map(\(ind.name) {
-    list.files(
-      './models',
-      pattern = paste0('RF.cv_res_', ind.name),
-      full.names = T
-    ) %>%
-      read_rds()
+    paste0(pth2export, 'RF.cv_metrics_', ind.name, '.csv') %>%
+      read_csv(show_col_types = F)
   }) %>%
   setNames(ind.names$eiv_name_raw)
 
 # import tuning results
 tune_res <- ind.names$eiv_name_raw %>%
   map(\(ind.name) {
-    list.files(
-      './models',
-      pattern = paste0('RF.tune_res_', ind.name),
-      full.names = T
-    ) %>%
+    paste0(pth2export, 'RF.tune_res_', ind.name, '.rds') %>%
       read_rds()
   }) %>%
   setNames(ind.names$eiv_name_raw)
@@ -288,18 +274,9 @@ ggsave(
 
 #### 7. Geographic patterns in model residuals #### 
 # get EU-countires sf shapes
-regions_name <- c('Albania', 'Austria', 'Belarus', 'Belgium', 'Bosnia and Herzegovina', 'Bulgaria',
-                  'Corsica', 'Crete', 'Croatia', 'Czechia', 'Denmark', 'Estonia', 'Finland', 'France', 'Germany',
-                  'Greece', 'Hungary', 'Ireland', 'Italy', 'Kosovo', 'Latvia', 'Liechtenstein',
-                  'Lithuania', 'Luxembourg', 'Malta', 'Moldova', 'Montenegro', 'Netherlands', 'North Macedonia',
-                  'Norway', 'Poland', 'Portugal', 'Romania', 'Sardinia', 'Serbia', 'Sicily',
-                  'Slovakia', 'Slovenia', 'Spain', 'Sweden', 'Switzerland', 'Ukraine', 'United Kingdom')
-bbox_coords <- c(xmin = -1123055, ymin = 3923814, xmax = 2796649, ymax = 8007282)
-EU <- ne_countries(scale = 'large', returnclass = 'sf') %>%
-  filter(name %in% regions_name) %>%
-  st_transform(crs = 25832) %>%
-  st_crop(bbox_coords) %>% 
-  select(geometry)
+EU <- read_rds('./data/EU_shape_map.rds') %>% 
+  st_buffer(1000) %>% 
+  st_simplify(dTolerance = 4000)
 
 # calculate residuals (= obs - pred)
 pred_test$resid <- (pred_test$eiv - pred_test$.pred) # model residuals

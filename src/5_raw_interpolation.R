@@ -9,20 +9,20 @@
 
 ################################################################################
 
-# Load packages
+# load packages
 suppressPackageStartupMessages({
   library(tidyverse)
   library(tidymodels)
 })
 
-# Set up 
+# set up 
 standardize_plot.size <- TRUE
 pred_years <- seq(1960, 2020, 1)
 
-# Source function to format Resurvey data
+# source function to format Resurvey data
 source('./src/0_helpfunctions.R')
 
-# Prepare data for interpolation
+# prepare data for interpolation
 set.seed(123)
 dat.i <- 
   bind_rows(
@@ -32,7 +32,7 @@ dat.i <-
       path_resurvey_clean = './data/ReSurveyEU_clean.csv.xz')[['traintest_data']]  # Load ReSurveyEU (static, using one random point in the survey)
   ) 
 
-# Calculate habitat plot size medians
+# calculate habitat plot size medians
 if (standardize_plot.size) {
   hab_plot.size <- dat.i %>%
     group_by(dataset, habitat) %>%
@@ -45,14 +45,14 @@ if (standardize_plot.size) {
 }
 hab_plot.size
 
-# Interpolate over study period
+# interpolate over study period
 dat.i <- dat.i %>%
   filter(year >= min(pred_years) & year <= max(pred_years))
 
 # set up response variable names
 ind.names <- c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')
 
-# Prediction loop
+# prediction loop
 for(ind.name in ind.names){
   
   pred_res <- list()
@@ -60,10 +60,9 @@ for(ind.name in ind.names){
   st <- Sys.time()
   
   print(paste0('Start interpolation for ', ind.name))
-
-  #### 1. Prepare data ####
-  dat = dat.i
   
+  # prepare data
+  dat <- dat.i
   # rename
   names(dat)[which(names(dat) == paste0('n.', ind.name))] <- 'treshold'
   names(dat)[which(names(dat) == paste0('cm.', ind.name))] <- 'eiv'
@@ -122,14 +121,14 @@ for(ind.name in ind.names){
 
   }
   
-  # Combine predictions across years
+  # combine predictions across years
   pred_res_df <- bind_rows(pred_res, .id='year')
 
-  # Export results
+  # dxport results
   write_csv(pred_res_df, output_file)
 
   print(Sys.time() - st)
 }
 
-# Quit
+# quit
 quit(save = 'no')

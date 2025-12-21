@@ -230,15 +230,15 @@ p <- ggplot(pdp.data_standardized, aes(year, std_mean)) +
     name = expression(Delta*CM[EIV]~'per decade slope')
   ) +
   theme(
-    strip.text.y.left   = element_text(angle = 270, vjust = 0.5, hjust = 0.5, face = 'bold'),
-    strip.text.x        = element_text(face = 'bold'),
-    strip.background.y  = element_blank(),
-    strip.background.x  = element_rect(fill = 'white'),
-    axis.text.x         = element_text(angle = 45, hjust = 1, size = 7),
-    legend.position     = 'bottom',
-    panel.grid.minor    = element_blank(),
-    panel.spacing       = unit(0.1, 'lines'),
-    # panel.border      = element_blank()
+    strip.text.y.left = element_text(angle = 270, vjust = 0.5, hjust = 0.5, face = 'bold'),
+    strip.text.x = element_text(face = 'bold'),
+    strip.background.y = element_blank(),
+    strip.background.x = element_rect(fill = 'white'),
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 7),
+    legend.position = 'bottom',
+    panel.grid.minor = element_blank(),
+    panel.spacing = unit(0.1, 'lines'),
+    # panel.border = element_blank()
     legend.background = element_rect(color = "#575757", linewidth = 0.4)
   ) +
   guides(fill = guide_legend(nrow = 1, byrow = TRUE))
