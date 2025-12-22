@@ -199,11 +199,11 @@ set.seed(123)
 pred_test <- ind.names$eiv_name_raw %>% map(\(x) {
   cat(x, ' |> ') # show progress
   d <- dat_split
-  names(d)[which(names(d) == paste0('n.', x))] <- 'treshold'
+  names(d)[which(names(d) == paste0('n.', x))] <- 'threshold'
   names(d)[which(names(d) == paste0('cm.', x))] <- 'eiv'
-  treshold.of.EIVE.species = 0.8 
+  threshold.of.EIVE.species = 0.8 
   d <- d %>%
-    filter(treshold >= treshold.of.EIVE.species) %>%
+    filter(threshold >= threshold.of.EIVE.species) %>%
     select(plot_id, eiv, x, y, elev, year, habitat, n, plot_size) %>%
     initial_split(prop = 4/5, strata = eiv)
   tstd <- testing(d)

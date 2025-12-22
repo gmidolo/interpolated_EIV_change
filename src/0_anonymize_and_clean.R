@@ -87,6 +87,67 @@ ReSuEU <- ReSuEU %>%
 # reorder a bit
 ReSuEU <- select(ReSuEU, database:n, x_mean, y_mean, max_dist_m, everything())
 
-#Export results####
+#Export `EVA` and `ReSurveyEU_clean` results####
 write_csv(EVA, './data/EVA.csv.xz')
 write_csv(ReSuEU, './data/ReSurveyEU_clean.csv.xz')
+
+
+# Anonymize, clean, and zip EVA and ReSurveyEU subset for CWM ####
+EVA_ReSu_CWM <- './data/EVA_ReSu_CWM.csv' %>%
+  read_csv(show_col_types = F) %>%
+  select(-contains('sd.')) %>%
+  mutate_if(is.numeric, round, 3) %>%
+  mutate(elev = round(elev, 0)) %>%
+  arrange(desc(x), desc(y)) %>%
+  mutate(plot_id = 1:nrow(.)) # anonymize plot id
+
+# anonymize datasets
+EVA_ReSu_CWM_datasets <- EVA_ReSu_CWM %>% 
+  select(dataset) %>%
+  unique() %>%
+  mutate(dataset_abbr =
+           abbreviate(stringi::stri_trans_general(dataset, 'Latin-ASCII'), 7, named = F) %>%
+           str_replace_all('_','') %>% str_replace_all('-','') %>% str_replace_all('\\.','') %>%
+           tolower()
+  ) 
+EVA_ReSu_CWM_datasets$dataset %>% duplicated() %>% table
+EVA_ReSu_CWM_datasets$dataset_abbr %>% duplicated() %>% table
+
+EVA_ReSu_CWM <- EVA_ReSu_CWM %>% 
+  left_join(EVA_ReSu_CWM_datasets, 'dataset') %>%
+  select(1,2, dataset_abbr, everything()) %>%
+  select(-dataset) %>%
+  rename(dataset = dataset_abbr)
+
+# Export
+write_csv(EVA_ReSu_CWM, './data/EVA_ReSu_CWM.csv.xz')
+
+# Anonymize, clean, and zip EVA and ReSurveyEU subset for CM calculated without trees ####
+EVA_ReSu_NOTREES <- './data/EVA_ReSu_NOTREES.csv' %>%
+  read_csv(show_col_types = F) %>%
+  select(-contains('sd.')) %>%
+  mutate_if(is.numeric, round, 3) %>%
+  mutate(elev = round(elev, 0)) %>%
+  arrange(desc(x), desc(y)) %>%
+  mutate(plot_id = 1:nrow(.)) # anonymize plot id
+
+# anonymize datasets
+EVA_ReSu_NOTREES_datasets <- EVA_ReSu_NOTREES %>% 
+  select(dataset) %>%
+  unique() %>%
+  mutate(dataset_abbr =
+           abbreviate(stringi::stri_trans_general(dataset, 'Latin-ASCII'), 7, named = F) %>%
+           str_replace_all('_','') %>% str_replace_all('-','') %>% str_replace_all('\\.','') %>%
+           tolower()
+  ) 
+EVA_ReSu_NOTREES_datasets$dataset %>% duplicated() %>% table
+EVA_ReSu_NOTREES_datasets$dataset_abbr %>% duplicated() %>% table
+
+EVA_ReSu_NOTREES <- EVA_ReSu_NOTREES %>% 
+  left_join(EVA_ReSu_NOTREES_datasets, 'dataset') %>%
+  select(1,2, dataset_abbr, everything()) %>%
+  select(-dataset) %>%
+  rename(dataset = dataset_abbr)
+
+# Export
+write_csv(EVA_ReSu_NOTREES, './data/EVA_ReSu_NOTREES.csv.xz')

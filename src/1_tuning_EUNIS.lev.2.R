@@ -66,12 +66,12 @@ future_map(ind.name.values, function(ind.name) {
     filter(ESy2 != 'Q3')
   
   # rename selected indicator variable
-  names(dat_split)[which(names(dat_split) == paste0('n.', ind.name))] <- 'treshold'
+  names(dat_split)[which(names(dat_split) == paste0('n.', ind.name))] <- 'threshold'
   names(dat_split)[which(names(dat_split) == paste0('cm.', ind.name))] <- 'eiv'
   
   # apply filters accordingly to the raw data
-  treshold.of.EIVE.species = 0.8
-  dat_split <- dat_split %>% filter(treshold >= treshold.of.EIVE.species)
+  threshold.of.EIVE.species = 0.8
+  dat_split <- dat_split %>% filter(threshold >= threshold.of.EIVE.species)
   
   # final selection of variables needed for modeling
   dat_split <- dat_split %>%

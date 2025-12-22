@@ -60,13 +60,13 @@ d.initial <- d.initial %>%
 ind.names <- c('EIV_L','EIV_T','EIV_M','EIV_N','EIV_R')
 
 # set minimum proportion of species with available EIV to include a plot in the analyses
-treshold.of.EIVE.species = 0.8
+threshold.of.EIVE.species = 0.8
 
 # count number of resurveys involved
 d.initial %>%
   select(resurv_id, contains('n.')) %>%
   gather('k', 'v', contains('n.')) %>%
-  filter(v >= treshold.of.EIVE.species) %>%
+  filter(v >= threshold.of.EIVE.species) %>%
   pull(resurv_id) %>%
   unique() %>%
   length()
@@ -75,7 +75,7 @@ d.initial %>%
 d.initial %>%
   select(plot_id, contains('n.')) %>%
   gather('k', 'v', contains('n.')) %>%
-  filter(v >= treshold.of.EIVE.species) %>%
+  filter(v >= threshold.of.EIVE.species) %>%
   pull(plot_id) %>%
   unique() %>%
   length()
@@ -98,7 +98,7 @@ for (ind.name in ind.names) {
   # apply filters
   d <- d %>%
     # filter based on proportion of species with EIV values available
-    filter(th >= treshold.of.EIVE.species) %>%
+    filter(th >= threshold.of.EIVE.species) %>%
     # group by resurvey plot
     group_by(resurv_id) %>%
     # filter resurvey plot with at least two plots

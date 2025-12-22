@@ -60,13 +60,13 @@ future_map(ind.name.values, function(ind.name) {
     )
   
   # rename
-  names(dat_split)[which(names(dat_split) == paste0('n.', ind.name))] <- 'treshold'
+  names(dat_split)[which(names(dat_split) == paste0('n.', ind.name))] <- 'threshold'
   names(dat_split)[which(names(dat_split) == paste0('cm.', ind.name))] <- 'eiv'
   
   # apply filters accordingly to the raw data
-  treshold.of.EIVE.species = 0.8 # set minimum proportion of species with available EIV to include in the analyses
+  threshold.of.EIVE.species = 0.8 # set minimum proportion of species with available EIV to include in the analyses
   dat_split <- dat_split %>%
-    filter(treshold >= treshold.of.EIVE.species) 
+    filter(threshold >= threshold.of.EIVE.species) 
   
   # final selection of variables needed for modeling
   dat_split <- dat_split %>%

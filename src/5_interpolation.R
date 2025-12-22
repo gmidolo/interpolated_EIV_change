@@ -69,13 +69,13 @@ for(ind.name in ind.names){
   dat <- dat.initial
   
   # rename focal variable
-  names(dat)[which(names(dat) == paste0('n.', ind.name))] <- 'treshold'
+  names(dat)[which(names(dat) == paste0('n.', ind.name))] <- 'threshold'
   names(dat)[which(names(dat) == paste0('cm.', ind.name))] <- 'eiv'
 
   # apply filters accordingly to the raw data
-  treshold.of.EIVE.species = 0.8 
+  threshold.of.EIVE.species = 0.8 
   dat <- dat %>%
-      filter(treshold >= treshold.of.EIVE.species)
+      filter(threshold >= threshold.of.EIVE.species)
 
   # final selection of variables needed for modeling
   dat <- dat %>%
