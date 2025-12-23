@@ -1,4 +1,4 @@
-# Data and R code for *Sixty years of plant community change in Europe indicate a shift towards nutrient-richer andshadier vegetation*
+# Data and R code for *Sixty years of plant community change in Europe indicate a shift towards nutrient-richer and shadier vegetation*
 
 ---
 
@@ -17,10 +17,12 @@ We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil m
     * [2. Random Forests Cross-Validation](#2-random-forests-cross-validation)
     * [3. Random Forests diagnostics and evaluation](#3-random-forests-diagnostics-and-evaluation)
     * [4. Analyses on actual time series data (ReSurveyEurope)](#4-analyses-on-actual-time-series-data-resurveyeurope)
-    * [5. Predict Random Forests (Interpolate ΔCMEIV)](#5-predict-random-forests-interpolate-%ce%b4cmeiv)
+    * [5. Predict Random Forests (interpolate CM<sub>EIV</sub>)](#5-predict-random-forests-interpolate-%ce%b4cmeiv)
     * [6. Visualize interpolation results](#6-visualize-interpolation-results)
-    * [7. Sensitivity analyses (CWM and NOTREES)](#7-sensitivity-analyses-using-community-weighted-means-cwm-and-excluding-treeshurb-species-notrees)
+    * [7. Sensitivity analyses](#7-sensitivity-analyses-using-community-weighted-means-cwm-and-excluding-treeshurb-species-notrees)
     * [Additional scripts](#additional-scripts)
+    * [Scripts for raw data processing](#raw-data-processing-(not-reproducible))
+* [Metadata](#metadata)
 * [License](#license)
 * [Citation](#citation)
 
@@ -54,7 +56,7 @@ Renata Ćušterevska <a href="https://orcid.org/0000-0002-3849-6983" target="_bl
 Pieter De Frenne <a href="https://orcid.org/0000-0002-8613-0943" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
 Michele De Sanctis <a href="https://orcid.org/0000-0002-7280-6199" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
 Jan Divíšek <a href="https://orcid.org/0000-0002-5127-5130" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
-Jiří Doležal <a https://orcid.org/0000-0002-5829-4051" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
+Jiří Doležal <a href="https://orcid.org/0000-0002-5829-4051" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
 Tetiana Dziuba <a href="https://orcid.org/0000-0001-8621-0890" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
 Rasmus Ejrnæs <a href="https://orcid.org/0000-0003-2538-8606" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
 Emmanuel Garbolino <a href="https://orcid.org/0000-0002-4954-6069" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
@@ -140,8 +142,8 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 
 ### 1. Random Forests tuning and final model fit
 
-- [`1_tuning.R`](src/1_tuning.R): Script for tuning and fitting the Random Forest model using all available observations.
-- [`1_tuning_EUNIS.lev.2.R`](src/1_tuning_EUNIS.lev.2.R): Script for tuning and fitting the Random Forest model exclusively on plot data with available EUNIS-ESy level 2 habitat classifications.
+- [`1_tuning.R`](src/1_tuning.R): Tune and fit Random Forest models using all available observations.
+- [`1_tuning_EUNIS.lev.2.R`](src/1_tuning_EUNIS.lev.2.R): Tune and fit Random Forest models using EUNIS-ESy level 2 habitats as predictors.
 
 ### 2. Random Forests Cross-Validation
 
@@ -158,33 +160,102 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 
 ### 5. Predict Random Forests (Interpolate ΔCM<sub>EIV</sub>)
 
-- [`5_interpolation.R`](src/5_interpolation.R): Interpolates changes in community-mean ecological indicator values (ΔCM<sub>EIV</sub>). Uses prediction ensemble (mean) across all trees in the random forests.
-- [`5_raw_interpolation.R`](src/5_raw_interpolation.R): Interpolates average ΔCM<sub>EIV</sub>s across all trees in the random forests and store summary stats for predictions across all plots for each year (1960-2020) and habitat type.
+- [`5_interpolation.R`](src/5_interpolation.R): Interpolate changes in community-mean ecological indicator values (ΔCM<sub>EIV</sub>). Uses prediction ensemble (mean) across all trees in the random forests.
+- [`5_raw_interpolation.R`](src/5_raw_interpolation.R): Interpolate average CM<sub>EIV</sub>s across all trees in the random forests and store summary stats for predictions across all plots for each year (1960-2020) and habitat type.
 
 ### 6. Visualize interpolation results
 
 - [`6_plot_trends.R`](src/6_plot_trends.R): Visualize histograms and partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
-- [`6_plot_trends_EUNIS.lev.2.R`](src/6_plot_trends_EUNIS.lev.2.R): Visualzie partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub> across different EUNIS-ESy level 2 habitats.
+- [`6_plot_trends_EUNIS.lev.2.R`](src/6_plot_trends_EUNIS.lev.2.R): Visualize partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub> across different EUNIS-ESy level 2 habitats.
 - [`6_map.geo.R`](src/6_map.geo.R): Visualize geographical maps displaying the average ΔCM<sub>EIV</sub> across Europe.
 
 ### 7. Sensitivity analyses using Community Weighted Means ('CWM') and excluding tree/shurb species ('NOTREES')
 
-- [`6_plot_trends.R`](src/6_plot_trends.R): Visualize histograms and partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
-- [`6_plot_trends_EUNIS.lev.2.R`](src/6_plot_trends_EUNIS.lev.2.R): Visualzie partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub> across different EUNIS-ESy level 2 habitats.
+- [`7_tuning_CWM.R`](src/7_tuning_CWM.R): Tune and fit separate Random Forest models for both community means (CM<sub>EIV</sub>) and community weighted means(CWM<sub>EIV</sub>).
+- [`7_tuning_NOTREES.R`](src/7_tuning_NOTREES.R): Tune and fit Random Forest models for CM<sub>EIV</sub>s calculated by excluding tree and shrub species.
+- [`7_interpolate_and_plot_CWM.R`](src/7_interpolate_and_plot_CWM.R): Interpolate and plot results from [`7_tuning_CWM.R`](src/7_tuning_CWM.R).
+- [`7_interpolate_and_plot_TREES.R`](src/7_interpolate_and_plot_TREES.R): Interpolate and plot results from [`7_tuning_NOTREES.R`](src/7_tuning_NOTREES.R).
 
 ### Additional scripts
 
 - [`0_anonymize_and_clean.R`](src/0_anonymize_and_clean.R): An internal script used to anonymize the `plot_id` column from EVA/ReSurveyEurope data shared in this repository (no need to run this script).
 - [`0_helpfunctions.R`](src/0_helpfunctions.R): Contains R functions sourced by other analysis scripts.
 
+### Raw data processing (not reproducible)
+
+**N.B. This part of the code is used to prepare the raw data from EVA and ReSurveyEurope. It is not directly reproducible unless a data request is made to the EVA and ReSurveyEurope governing board.**
+
+- [`raw_data_processing/1_prepare.data.R`](src/raw_data_processing/1_prepare.data.R): Main script to preprocess raw data retrieved in EVA/ReSurveyEurope proj. no. 222 (DOI: [ 10.58060/250x-we61](https://doi.org/10.58060/250x-we61))
+- [`raw_data_processing/2_search.and.remove.duplicates.R`](src/raw_data_processing/2_search.and.remove.duplicates.R): Remove presumed or actual duplicate plots within and across EVA and ReSurveyEurope data (plots with the same year of sampling, geographic coordinates, and species composition)
+- [`raw_data_processing/3_clean_ReSurveyEU.R`](src/raw_data_processing/3_clean_ReSurveyEU.R): Remove plots in ReSurveyEurope with 'uncertain' plots location (i.e., $\ge$ 100 m distance between observations of the same plots)
+- [`raw_data_processing/4_finalcleanforCWM.R`](src/raw_data_processing/4_finalcleanforCWM.R): Correct plot selection made in previous steps for the subset of data containing community weighted means (CWM)
+- [`raw_data_processing/5_noTREES.and.rare.species`](src/raw_data_processing/5_noTREES.and.rare.species): Recalculate CM<sub>EIV</sub>s by excluding trees and shurb species; compare sensitivity of CM<sub>EIV</sub>s when "rare" species are excluded
+
+## Metadata
+
+### 1. General Dataset Information
+
+|  | **Description** |
+|-------------------------------|-----------------------------------------|
+| **Dataset names** | European Vegetation Archive (EVA); ReSurveyEurope |
+| **Version** | Version 2024-09-19 (DOI: <https://doi.org/10.58060/hgrb-sw46>) |
+| **Project name** | "EVA project \# 222 – 2024-09-12 Interpolated dynamics of local plant diversity in European vegetation - G. Midolo \| SELECTION 2024-10-31" (DOI: <https://doi.org/10.58060/250x-we61>) |
+| **Date of creation** | Data selection date for project #222: 2024-10-31. The EVA database is in development since 2012 and first made available for use in research projects in 2014. The first data call for ReSurveyEurope was announced in 2020. |
+| **Citation** | Chytrý, M., Hennekens, S. M., Jiménez‐Alfaro, B., Knollová, I., Dengler, J., Jansen, F., ... & Yamalov, S. (2016). European Vegetation Archive (EVA): an integrated database of European vegetation plots. *Applied Vegetation Science*, *19*(1), 173-180. <https://doi.org/10.1111/avsc.12191> <br> Knollová, I., Chytrý, M., Bruelheide, H., Dullinger, S., Jandt, U., Bernhardt‐Römermann, M., ... & Essl, F. (2024). ReSurveyEurope: A database of resurveyed vegetation plots in Europe. *Journal of Vegetation Science*, *35*(2), e13235. <https://doi.org/10.1111/jvs.13235> |
+| **Data curators** | [The EVA Coordinating Board and EVA Council](https://euroveg.org/eva-database/who-we-are) <br> [The ReSurveyEurope Board](https://euroveg.org/resurvey/) |
+
+------------------------------------------------------------------------
+
+### 2. Dataset Description
+
+|   | **Raw data (\*)** | **Data in the repository** |
+|-----------------|----------------------|----------------------------------|
+| **Summary** | EVA contains vegetation plot data across Europe, including species composition and plot metadata. ReSurveyEurope contains data in a similar format, but for plots with repeated measurements over time. | Subset restricted to plot observations relevant for analyzing temporal changes in vascular plant species richness across Europe. Includes processed and harmonized species and site-level data used for modelling species richness change. |
+| **Provenance** | Compiled from 308 databases contributed by data owners under EVA and ReSurveyEurope governance. | Compiled from 263 databases contributed by data owners under EVA and ReSurveyEurope governance. |
+| **Temporal coverage (range)** | 1873–2023 | 1945–2023 (model training); 1960–2020 (predictions/interpolation) |
+| **Geographical coverage (range)** | Longitude (WGS84): -180.00 – 64.84; Latitude (WGS84): -90.00 – 80.15 (includes geographic outliers) | Longitude (WGS84): -10.52 – 38.79; Latitude (WGS84): 34.80 – 71.12 |
+| **Sampling frame** | Vegetation plots categorized as various European habitats: marine, coastal, inland water, wetland, grassland, scrub, forest, inland habitats with little soil, and vegetated man-made habitats, as defined in the EUNIS Habitat Classification System. | Vegetation plots categorized exclusively as forest, grassland, scrub, and wetland vegetation, as defined in the EUNIS Habitat Classification System. |
+| **Number of records and plots** | No. of plots: 1,745,721; core EVA: 1,676,182; ReSurveyEurope plot observations: 103,397 | No. of core EVA: 675,840 vegetation plots; core ReSurveyEurope plot observations: 73,886 (from 22,852 resurvey plots) |
+| **Number of variables** | 46 fields in the header metadata (raw) | 22 fields in the shared data |
+
+(\*) These values refer to the raw data released for project \# 222 (<https://doi.org/10.58060/250x-we61>)
+
+------------------------------------------------------------------------
+
+### 3. Access and Licensing
+
+|   | **Raw data (\*)** | **Data in the repository** |
+|-----------------|----------------------|----------------------------------|
+| **Access conditions** | Data access follows either free-access, semi-restricted, or restricted models, depending on the availability regime assigned by the database custodians. In any case, **the data are only accessible through a data request to the EVA and ReSurveyEurope Governing Board.** | Data access follows either free-access, semi-restricted, or restricted models, depending on the availability regime assigned by the database custodians. The data stored in this repository can be used to reproduce the main analyses (models, predictions, figures). **Use in other works or publications requires Governing Board approval.** |
+| **How to obtain access** | Data can be accessed through a request to the Governing Board, following [Article 5 of the EVA rules](https://euroveg.org/download/eva-rules.pdf). More info: <https://euroveg.org/eva-database/obtaining-data> | Through this repository ([`input`](data/input)). **To use these data elsewhere, a data request must be submitted to the Governing Board**. |
+| **License / Terms of Use** | Depending on the availability regime assigned by the database custodians and EVA/ReSurveyEurope Governing Board. | Derived data follow the same access constraints. Metadata and code in this repository are licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/). |
+| **Data availability statement** | Not publicly accessible due to third-party ownership. | All data-processing scripts and data that are essential to reproduce the analyses are publicly available in this repository. |
+
+(\*) These values refer to the raw data released for project \# 222 (<https://doi.org/10.58060/250x-we61>)
+
+------------------------------------------------------------------------
+
+### 4. Methods and Processing
+
+|   | **Raw data (\*)** | **Data in the repository** |
+|-----------------|----------------------|----------------------------------|
+| **Data collection methods** | Records of the abundance and/or occurrence of plant species found in vegetation plots collected in the field. | Not available (data are elaborated based on the raw data). |
+| **Inclusion / exclusion criteria** | Includes different vegetation types, plot sizes, quality levels, and time periods available in the raw data. Eligibility of databases to be included in EVA and ReSurveyEurope is regulated by the Governing Board. | Vegetation plots with full lists of vascular plant species categorized as forest, grassland, scrub, and wetland, with plot size 1–1000 m², valid geographic coordinates, and sampled between 1945–2023. Detailed selection criteria are in the main manuscript. |
+| **Data harmonization** | Managed by the EVA and ReSurveyEurope curators (species abundances and nomenclature). | Same as 'raw data'. |
+| **Data processing (main) steps** | Managed by EVA and ReSurveyEurope curators. | 1\. Application of inclusion/exclusion criteria to the raw data. <br> 2. Calculation of species richness (number of unique vascular plant species) for each plot using the species list data from the raw data. |
+| **Quality control** | Conducted by data providers and EVA/ReSurveyEurope curators. | Conducted by Gabriele Midolo with help from database custodians. Included coordinate plausibility checks (manual and automated), species richness plausibility checks (manual), and duplicate removal within and between EVA and ReSurveyEurope (automated). |
+| **Processing code** | Not available. | All R scripts documenting processing steps and quality control are stored in this repository ([src/raw_data_processing](src/raw_data_processing)). |
+| **Software environment** | Varies by data provider. | R version 4.4.2. R packages for data processing: `tidyverse`, `sf`, `terra`. |
+| **Reproducibility** | Not reproducible without subset definition. | Fully reproducible for EVA-authorized users using the R code stored in this repository. |
+
+(\*) These values refer to the raw data released for project \# 222 (<https://doi.org/10.58060/250x-we61>)
+
 ## License
 
 **Data** are available under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International license (CC BY-NC-ND 4.0) (<https://creativecommons.org/licenses/by-nc-nd/4.0/>).
 
-**Code** is available under the terms of the GNU General Public License v3.0 (GPL-3.0) (<https://www.gnu.org/licenses/gpl-3.0.html>).
+**Code** are available under the terms of the GNU General Public License v3.0 (GPL-3.0) (<https://www.gnu.org/licenses/gpl-3.0.html>).
 
 ## Citation
 
 *This repository is not linked to any publication yet.*
-
----
