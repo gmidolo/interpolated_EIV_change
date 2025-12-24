@@ -4,8 +4,9 @@
 
 This repository includes the **data** and **R code** used in our study. It allows for the reproduction of the main analyses and supplementary materials. Due to their substantial file size, model outputs and predictions are not included in this repository but are currently available on Zenodo (<LINK>).
 
-We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,877 vascular plant taxa across 640,751 European vegetation plots. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their spatiotemporal dynamics.
+We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,874 vascular plant taxa across 692,393 vegetation plots in Europe. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their spatiotemporal dynamics.
 
+The [interactive map to explore interpolated spatiotemporal changes of CM<sub>EIV</sub>s](https://gmidolo.shinyapps.io/interpolated_EIV_change_app) is deposited here: [https://github.com/gmidolo/interpolated_EIV_change_app](https://github.com/gmidolo/interpolated_EIV_change_app). 
 
 ## Table of Contents
 
@@ -38,7 +39,7 @@ Email 1: `gabriele.midolo [at] gmail [dot] com`
 Email 2: `midolo [at] fzp.czu [dot] cz`
 
 ### Authors and data contributors
-**Gabriele Midolo** <a href="https://orcid.org/0000-0003-1316-2546" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
+Gabriele Midolo <a href="https://orcid.org/0000-0003-1316-2546" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
 Adam Thomas Clark <a href="https://orcid.org/0000-0002-8843-3278" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
 Milan Chytrý <a href="https://orcid.org/0000-0002-8122-3075" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
 Franz Essl <a href="https://orcid.org/0000-0001-8253-2112" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" class="is-rounded" width="15"/></a>,
@@ -210,13 +211,13 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 
 |   | **Raw data (\*)** | **Data in the repository** |
 |-----------------|----------------------|----------------------------------|
-| **Summary** | EVA contains vegetation plot data across Europe, including species composition and plot metadata. ReSurveyEurope contains data in a similar format, but for plots with repeated measurements over time. | Subset restricted to plot observations relevant for analyzing temporal changes in vascular plant species richness across Europe. Includes processed and harmonized species and site-level data used for modelling species richness change. |
-| **Provenance** | Compiled from 308 databases contributed by data owners under EVA and ReSurveyEurope governance. | Compiled from 263 databases contributed by data owners under EVA and ReSurveyEurope governance. |
+| **Summary** | EVA contains vegetation plot data across Europe, including species composition and plot metadata. ReSurveyEurope contains data in a similar format, but for plots with repeated measurements over time. | Subset restricted to plot observations relevant for analyzing temporal changes in community means of ecological indicator values of vascular plants across Europe. Includes processed and harmonized species and site-level data used for modelling community-mean ecological indicator value change. |
+| **Provenance** | Compiled from 308 datasets contributed by data owners under EVA and ReSurveyEurope governance. | Compiled from 270 datasets contributed by data owners under EVA and ReSurveyEurope governance. |
 | **Temporal coverage (range)** | 1873–2023 | 1945–2023 (model training); 1960–2020 (predictions/interpolation) |
-| **Geographical coverage (range)** | Longitude (WGS84): -180.00 – 64.84; Latitude (WGS84): -90.00 – 80.15 (includes geographic outliers) | Longitude (WGS84): -10.52 – 38.79; Latitude (WGS84): 34.80 – 71.12 |
+| **Geographical coverage (range)** | Longitude (WGS84): -180.00 – 64.84; Latitude (WGS84): -90.00 – 80.15 (includes geographic outliers) | Longitude (WGS84): -10.52 – 38.78; Latitude (WGS84): 34.80 – 71.12 |
 | **Sampling frame** | Vegetation plots categorized as various European habitats: marine, coastal, inland water, wetland, grassland, scrub, forest, inland habitats with little soil, and vegetated man-made habitats, as defined in the EUNIS Habitat Classification System. | Vegetation plots categorized exclusively as forest, grassland, scrub, and wetland vegetation, as defined in the EUNIS Habitat Classification System. |
-| **Number of records and plots** | No. of plots: 1,745,721; core EVA: 1,676,182; ReSurveyEurope plot observations: 103,397 | No. of core EVA: 675,840 vegetation plots; core ReSurveyEurope plot observations: 73,886 (from 22,852 resurvey plots) |
-| **Number of variables** | 46 fields in the header metadata (raw) | 22 fields in the shared data |
+| **Number of records and plots** | No. of plots: 1,745,721; core EVA: 1,676,182; ReSurveyEurope plot observations: 103,397 | No. of core EVA: 622,906 vegetation plots; core ReSurveyEurope plot observations: 69,487 (from 21,618 resurvey plots) |
+| **Number of variables** | 46 fields in the header metadata (raw) | 28 fields in the shared data (after merging EVA and ReSurveyEurope) |
 
 (\*) These values refer to the raw data released for project \# 222 (<https://doi.org/10.58060/250x-we61>)
 
@@ -240,9 +241,9 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 |   | **Raw data (\*)** | **Data in the repository** |
 |-----------------|----------------------|----------------------------------|
 | **Data collection methods** | Records of the abundance and/or occurrence of plant species found in vegetation plots collected in the field. | Not available (data are elaborated based on the raw data). |
-| **Inclusion / exclusion criteria** | Includes different vegetation types, plot sizes, quality levels, and time periods available in the raw data. Eligibility of databases to be included in EVA and ReSurveyEurope is regulated by the Governing Board. | Vegetation plots with full lists of vascular plant species categorized as forest, grassland, scrub, and wetland, with plot size 1–1000 m², valid geographic coordinates, and sampled between 1945–2023. Detailed selection criteria are in the main manuscript. |
+| **Inclusion / exclusion criteria** | Includes different vegetation types, plot sizes, quality levels, and time periods available in the raw data. Eligibility of datasets to be included in EVA and ReSurveyEurope is regulated by the Governing Board. | Vegetation plots with full lists of vascular plant species categorized as forest, grassland, scrub, and wetland, with plot size 1–1000 m², valid geographic coordinates, and sampled between 1945–2023. Detailed selection criteria are in the main manuscript. |
 | **Data harmonization** | Managed by the EVA and ReSurveyEurope curators (species abundances and nomenclature). | Same as 'raw data'. |
-| **Data processing (main) steps** | Managed by EVA and ReSurveyEurope curators. | 1\. Application of inclusion/exclusion criteria to the raw data. <br> 2. Calculation of species richness (number of unique vascular plant species) for each plot using the species list data from the raw data. |
+| **Data processing (main) steps** | Managed by EVA and ReSurveyEurope curators. | 1\. Application of inclusion/exclusion criteria to the raw data. <br> 2. Calculation of community-mean ecological indicator value (CM<sub>EIV</sub>) for each plot using the species list data from the raw data. |
 | **Quality control** | Conducted by data providers and EVA/ReSurveyEurope curators. | Conducted by Gabriele Midolo with help from database custodians. Included coordinate plausibility checks (manual and automated), species richness plausibility checks (manual), and duplicate removal within and between EVA and ReSurveyEurope (automated). |
 | **Processing code** | Not available. | All R scripts documenting processing steps and quality control are stored in this repository ([src/raw_data_processing](src/raw_data_processing)). |
 | **Software environment** | Varies by data provider. | R version 4.4.2. R packages for data processing: `tidyverse`, `sf`, `terra`. |
