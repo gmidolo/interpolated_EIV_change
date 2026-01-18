@@ -1,10 +1,10 @@
-# Data and R code for *Sixty years of plant community change in Europe indicate a shift towards nutrient-richer and shadier vegetation*
+# Data and R code for *Sixty years of plant community change in Europe indicate a shift towards nutrient‑richer and denser vegetation*
 
 ---
 
-This repository includes the **data** and **R code** used in our study. It allows for the reproduction of the main analyses and supplementary materials. Due to their substantial file size, model outputs and predictions are not included in this repository but are currently available on Zenodo (<LINK>).
+This repository includes the **data** and **R code** used in our study. It allows for the reproduction of the main analyses and supplementary materials. Due to their substantial file size, model outputs and predictions are not included in this repository but are currently available on Zenodo (DOI: [10.5281/zenodo.18266902][https://doi.org/10.5281/zenodo.18266902]).
 
-We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,874 vascular plant taxa across 692,393 vegetation plots in Europe. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their spatiotemporal dynamics.
+We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,874 vascular plant taxa across 692,393 vegetation plots in Europe. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their plot-level spatiotemporal dynamics.
 
 The [interactive map to explore interpolated spatiotemporal changes of CM<sub>EIV</sub>s](https://gmidolo.shinyapps.io/interpolated_EIV_change_app) is deposited here: [https://github.com/gmidolo/interpolated_EIV_change_app](https://github.com/gmidolo/interpolated_EIV_change_app). 
 
