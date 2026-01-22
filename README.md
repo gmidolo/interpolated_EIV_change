@@ -86,7 +86,7 @@ The primary data sources used in this project are not directly stored in this re
 
 The `data` folder contains cleaned and processed data files used for the analyses:
 
--   [`data/EUNIS_ESy2_habitat.names.txt`](data/EUNIS_ESy2_habitat.names.txt): A text file providing full names for the EUNIS-ESy level 2 habitat classification (for more details on EUNIS classification, refer to <https://floraveg.eu/habitat/>).
+-   [`data/EUNIS_ESy2_habitat.names.txt`](data/EUNIS_ESy2_habitat.names.txt): A text file providing full names for the level-2 EUNIS-ESy habitat classification (for more details on EUNIS classification, refer to <https://floraveg.eu/habitat/>).
 -   [`data/EVA.csv.xz`](data/EVA.csv.xz): A xz-compressed CSV file containing selected vegetation plots from the EVA database. 
 -   [`data/ReSurveyEU_clean.csv.xz`](data/ReSurveyEU_clean.csv.xz): A xz-compressed CSV file with selected plots from the ReSurveyEurope dataset.
 -   [`data/EVA_ReSu_CWM.csv.xz`](data/EVA_ReSu_CWM.csv.xz): A xz-compressed CSV file containing a subset of plots for which the community-weighted mean (CWM) of EIVs were calculated (used for sensitivity analyses).
@@ -144,7 +144,7 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 ### 1. Random Forests tuning and final model fit
 
 - [`1_tuning.R`](src/1_tuning.R): Tune and fit Random Forest models using all available observations.
-- [`1_tuning_EUNIS.lev.2.R`](src/1_tuning_EUNIS.lev.2.R): Tune and fit Random Forest models using EUNIS-ESy level 2 habitats as predictors.
+- [`1_tuning_EUNIS.lev.2.R`](src/1_tuning_EUNIS.lev.2.R): Tune and fit Random Forest models using level-2 EUNIS-ESy habitats as predictors.
 
 ### 2. Random Forests Cross-Validation
 
@@ -162,12 +162,13 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 ### 5. Predict Random Forests (Interpolate ΔCM<sub>EIV</sub>)
 
 - [`5_interpolation.R`](src/5_interpolation.R): Interpolate changes in community-mean ecological indicator values (ΔCM<sub>EIV</sub>). Uses prediction ensemble (mean) across all trees in the random forests.
-- [`5_raw_interpolation.R`](src/5_raw_interpolation.R): Interpolate average CM<sub>EIV</sub>s across all trees in the random forests and store summary stats for predictions across all plots for each year (1960-2020) and habitat type.
+- [`5_raw_interpolation.R`](src/5_raw_interpolation.R): Interpolate average CM<sub>EIV</sub>s across all trees in the random forests and store summary stats for predictions across all plots for each year (1960-2020) and main habitat type.
+- [`5_raw_interpolation_EUNIS.lev.2.R`](src/5_raw_interpolation_EUNIS.lev.2.R): Interpolate average CM<sub>EIV</sub>s across all trees in the random forests and store summary stats for predictions for level-2 EUNIS-ESy habitats.
 
 ### 6. Visualize interpolation results
 
 - [`6_plot_trends.R`](src/6_plot_trends.R): Visualize histograms and partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub>.
-- [`6_plot_trends_EUNIS.lev.2.R`](src/6_plot_trends_EUNIS.lev.2.R): Visualize partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub> across different EUNIS-ESy level 2 habitats.
+- [`6_plot_trends_EUNIS.lev.2.R`](src/6_plot_trends_EUNIS.lev.2.R): Visualize partial plots illustrating the interpolated dynamics of CM<sub>EIV</sub> across different level-2 EUNIS-ESy habitats.
 - [`6_map.geo.R`](src/6_map.geo.R): Visualize geographical maps displaying the average ΔCM<sub>EIV</sub> across Europe.
 
 ### 7. Sensitivity analyses using Community Weighted Means ('CWM') and excluding tree/shurb species ('NOTREES')
