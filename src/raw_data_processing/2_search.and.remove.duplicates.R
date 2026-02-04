@@ -23,13 +23,13 @@ species_data <- read_delim(
 ) %>%
   bind_rows( ## add GVRD species data
     read_delim(
-      paste0('C:/Users/', username, '/OneDrive - CZU v Praze/czu/intrplEU/','data/eva/222_PlantDiversity20241017_notJUICE/222_PlantDiversity20241017_notJUICE_species.csv'),
+      paste0('C:/Users/', username, '/OneDrive - CZU v Praze/czu/intrplEU/','data/eva/222_PlantDIversity20241025_GVRD/222_GVRD_20241025_notJUICE_species.csv'),
       col_select = c(1,3,6,9,10), show_col_types = F
     ) 
   ) %>%
   bind_rows( ## add UKFloodplainMeadows species data
     read_delim(
-      paste0('C:/Users/', username, '/OneDrive - CZU v Praze/czu/intrplEU/','data/eva/222_PlantDiversity20241017_notJUICE/222_PlantDiversity20241017_notJUICE_species.csv'),
+      paste0('C:/Users/', username, '/OneDrive - CZU v Praze/czu/intrplEU/','data/eva/222_UKFloodplainMeadows20241031/222_UKFloodplainMeadows20241031_notJUICE_species.csv'),
       col_select = c(1,3,6,9,10), show_col_types = F
     ) 
   ) %>%
