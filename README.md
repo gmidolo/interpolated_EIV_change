@@ -2,7 +2,7 @@
 
 ---
 
-This repository includes the **data** and **R code** used in our study. It allows for the reproduction of the main analyses and supplementary materials. Due to their substantial file size, model outputs and predictions are not included in this repository but can be downloaded from Zenodo repositories (DOI: [10.5281/zenodo.18266902](https://doi.org/10.5281/zenodo.18266902); DOI: [10.5281/zenodo.18273110](https://doi.org/10.5281/zenodo.18273110)).
+This repository includes the **data** and **R code** used in our study. It allows for the reproduction of the main analyses and supplementary materials. Due to their substantial file size, model outputs and predictions are not included in this repository but can be downloaded from Zenodo repositories (DOI: [10.5281/zenodo.18625789](https://doi.org/10.5281/zenodo.18625789); DOI: [10.5281/zenodo.18273110](https://doi.org/10.5281/zenodo.18273110)).
 
 We studied temporal trends (1960-2020) for five EIVs (light, temperature, soil moisture, soil nitrogen, soil reaction) using data from 13,874 vascular plant taxa across 692,393 vegetation plots in Europe. We calculated plot-level mean indicator values (CM<sub>EIV</sub>) and then applied Random Forests to interpolate their plot-level spatiotemporal dynamics.
 
