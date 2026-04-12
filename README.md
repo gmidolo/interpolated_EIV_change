@@ -260,4 +260,4 @@ The `src` folder contains the R scripts organized by their analytical purpose:
 
 ## Citation
 
-*This repository is not linked to any publication yet.*
+Midolo et al. (2026) Sixty years of plant community change in Europe indicate a shift toward nutrient-richer and denser vegetation *Science Advances*, **12**, eaeb2493. DOI: [10.1126/sciadv.aeb2493](https://doi.org/10.1126/sciadv.aeb2493)
